@@ -3,19 +3,21 @@ import torch.distributed as dist
 
 from typing import Dict, Optional
 from torch import nn, Tensor
-from transformers import PreTrainedModel, AutoConfig, MllamaForConditionalGeneration, LlavaNextForConditionalGeneration
+from transformers import (
+    PreTrainedModel, AutoConfig, 
+    MllamaForConditionalGeneration, 
+    LlavaNextForConditionalGeneration,
+    Qwen2_5_VLModel,
+
+    )
 from peft import LoraConfig, get_peft_model, PeftModel
 
 from src.arguments import ModelArguments, TrainingArguments
 from src.vlm_backbone.phi3_v.modeling_phi3_v import Phi3VForCausalLM
-from src.vlm_backbone.llava_next import LlavaNextForConditionalGeneration
 
+import os
 
 class MMEBModel(nn.Module):
-    TRANSFORMER_CLS = {
-        "meta-llama/Llama-3.2-11B-Vision": MllamaForConditionalGeneration
-    }
-
     def __init__(self,
                  encoder: PreTrainedModel,
                  pooling: str = 'cls',
@@ -45,7 +47,10 @@ class MMEBModel(nn.Module):
             print(f"Process rank: {self.process_rank}, World size: {self.world_size}")
 
     def encode_input(self, input):
-        hidden_states = self.encoder(**input, return_dict=True, output_hidden_states=True)
+        hidden_states = self.encoder(
+            **input, return_dict=True, 
+            output_hidden_states=True
+            )
         hidden_states = hidden_states.hidden_states[-1]
         pooled_output = self._pooling(hidden_states, input['attention_mask'])
         return pooled_output
@@ -106,6 +111,13 @@ class MMEBModel(nn.Module):
                 trust_remote_code=True
             )
             base_model.padding_side = "right"
+        elif model_args.model_backbone == "qwen2_5_vl":
+            base_model = Qwen2_5_VLModel.from_pretrained(
+                model_args.model_name, 
+                config=config,
+                torch_dtype=torch.bfloat16,
+                attn_implementation="flash_attention_2",
+            )
 
         if hasattr(base_model.config, 'text_config'):
             base_model.config.hidden_size = base_model.config.text_config.hidden_size
@@ -182,6 +194,13 @@ class MMEBModel(nn.Module):
                 trust_remote_code=True
             )
             base_model.padding_side = "right"
+        elif model_args.model_backbone == "qwen2_5_vl":
+            base_model = Qwen2_5_VLModel.from_pretrained(
+                model_args.model_name, 
+                torch_dtype=torch.bfloat16,
+                attn_implementation="flash_attention_2",
+                trust_remote_code=True
+            )
 
         # Building the model on top of the base
         if model_args.lora:
@@ -208,7 +227,7 @@ class MMEBModel(nn.Module):
         self.encoder.save_pretrained(output_dir)
 
     def forward(self, qry: Dict[str, Tensor] = None, tgt: Dict[str, Tensor] = None, neg: Dict[str, Tensor] = None):
-        qry_reps = self.encode_input(qry) if qry else None  # (bsz_per_device, dim)
+        qry_reps = self.encode_input(qry) if qry else None # (bsz_per_device, dim)
         tgt_reps = self.encode_input(tgt) if tgt else None # (bsz_per_device, dim)
         neg_reps = self.encode_input(neg) if neg else None # (bsz_per_device * negative_ratio, dim)
         if qry_reps is None or tgt_reps is None:

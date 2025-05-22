@@ -168,4 +168,15 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 .idea/
 
+
 outputs/
+core
+checkpoint/
+wandb/
+
+
+# My testing files...
+t.ipynb
+t.py
+test.py
+try.py

@@ -51,6 +51,13 @@ def main():
             trust_remote_code=True,
         )
         processor.tokenizer.padding_side = "right"
+    elif model_args.model_backbone == "qwen2_5_vl":
+        processor = AutoProcessor.from_pretrained(
+            model_args.processor_name if model_args.processor_name else model_args.model_name,
+            use_fast=True,
+            trust_remote_code=True,
+        )
+        processor.tokenizer.padding_side = "right"
     else:
         processor = AutoProcessor.from_pretrained(
             model_args.processor_name if model_args.processor_name else model_args.model_name,

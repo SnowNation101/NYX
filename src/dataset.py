@@ -125,7 +125,7 @@ class TrainDataset(Dataset):
             pos_text = pos_text.replace(Phi_Image_token, Qwen_Image_token)
             for ind, neg in enumerate(neg_texts):
                 neg_texts[ind] = neg.replace(Phi_Image_token, Qwen_Image_token)
-                
+
         for neg_img in neg_image_paths:
             neg_images.append(self._get_image(neg_img))
         return (qry_text, self._get_image(qry_image_path),

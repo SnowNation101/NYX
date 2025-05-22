@@ -7,6 +7,8 @@ from dataclasses import dataclass
 from transformers import ProcessorMixin
 
 from src.arguments import DataArguments, ModelArguments
+from qwen_vl_utils import process_vision_info
+
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -19,84 +21,101 @@ class TrainCollator:
     processor: ProcessorMixin
 
     def __call__(self, examples):
-        """
-        :param examples: qry, qry_image, pos_text, pos_image
-        """
         qry_inputs = self._get_batch_inputs(examples, 0, 1)
         pos_inputs = self._get_batch_inputs(examples, 2, 3)
         neg_inputs = self._get_batch_inputs(examples, 4, 5)
 
         return qry_inputs, pos_inputs, neg_inputs
     
-    def _process_single_data(self, text, image, input_ids, pixel_values, image_sizes, has_image, image_exist):
+    def _process_single_data(self, text, image, input_ids, pixel_values, attention_mask, image_grid_thw, image_exist):
         if image is None:
             if self.model_args.model_backbone == "llava_next":
                 inputs = self.processor(images=None, text=text, return_tensors="pt")
-            elif self.model_args.model_backbone == "qwen":
-                inputs = self.processor(text=[text], images=None, return_tensors="pt",
-                                        max_length=self.data_args.max_len, truncation=True)
             elif self.model_args.model_backbone == "qwen2_5_vl":
-                inputs = self.processor(text=text, images=None, return_tensors="pt",
-                                        max_length=self.data_args.max_len, truncation=True)
+                inputs = self.processor(text=text, 
+                                        images=None, 
+                                        return_tensors="pt",
+                                        max_length=self.data_args.max_len, 
+                                        truncation=True)
             else:
                 inputs = self.processor(text, None, return_tensors="pt", max_length=self.data_args.max_len,
                                         truncation=True)
             input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-            if self.model_args.model_backbone == "llava_next":
-                pixel_values.append(None)
-                image_sizes.append(None)
             return image_exist
         else:
             if self.model_args.model_backbone == "llava_next":
                 inputs = self.processor(images=image, text=text, return_tensors="pt")
+            elif self.model_args.model_backbone == "qwen2_5_vl":
+                image = image.convert("RGB")
+                inputs = self.processor(text=text, 
+                                        images=[image], 
+                                        return_tensors="pt", 
+                                        max_length=self.data_args.max_len, 
+                                        truncation=True)
             else:
-                inputs = self.processor(text, [image], return_tensors="pt", max_length=self.data_args.max_len, truncation=True)
-            pixel_values.append(inputs['pixel_values'])
+                inputs = self.processor(text=text, 
+                                        images=[image], 
+                                        return_tensors="pt",
+                                        max_length=self.data_args.max_len)
             input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-            image_sizes.append(inputs['image_sizes'])
-            has_image.append(True)
+            pixel_values.append(inputs['pixel_values'])
+            image_grid_thw.append(inputs['image_grid_thw'])
             return True
 
     def _get_batch_inputs(self, examples, text_idx, image_idx):
-        input_ids, pixel_values, image_sizes, has_image = [], [], [], []
+        input_ids, pixel_values, attention_mask, image_grid_thw = [], [], [], []
+        # Init image_exist to False, 
+        # if any example in the batch has image, it will be set to True
         image_exist = False
         for example in examples:
             text, image = example[text_idx], example[image_idx]
             if isinstance(image, List):
                 for t, img in zip(text, image):
-                    image_exist = self._process_single_data(t, img, input_ids, pixel_values, image_sizes, has_image, image_exist)
+                    image_exist = self._process_single_data(
+                        t, img, 
+                        input_ids, 
+                        pixel_values, 
+                        attention_mask, 
+                        image_grid_thw, 
+                        image_exist)
             else:
-                image_exist = self._process_single_data(text, image, input_ids, pixel_values, image_sizes, has_image, image_exist)
+                image_exist = self._process_single_data(
+                    text, image, 
+                    input_ids, 
+                    pixel_values, 
+                    attention_mask, 
+                    image_grid_thw, 
+                    image_exist)
         if len(input_ids)==0:
             return None
+
         input_ids = torch._C._nn.pad_sequence(
-            input_ids, batch_first=True, padding_value=self.processor.tokenizer.pad_token_id
+            input_ids, 
+            batch_first=True, 
+            padding_value=self.processor.tokenizer.pad_token_id
         ).squeeze(2)
+
         attention_mask = input_ids.ne(self.processor.tokenizer.pad_token_id)
-        if not image_exist:
-            dummy_pixel_values = torch.zeros(input_ids.shape[0], 1)
-            dummy_image_sizes = torch.ones(input_ids.shape[0], 1)
-            inputs = {
-                'input_ids': input_ids,
-                'attention_mask': attention_mask,
-                'pixel_values': dummy_pixel_values,
-                'image_sizes': dummy_image_sizes,
-            }
-        else:
-            if self.model_args.model_backbone == "llava_next":
-                pixel_values_shape = list(set(v.shape for v in pixel_values if v is not None))[0]
-                pixel_values = [v if v is not None else torch.zeros(pixel_values_shape) for v in pixel_values]
+
+        if image_exist:
             pixel_values = torch.cat(pixel_values, dim=0)
-            if self.model_args.model_backbone == "llava_next":
-                image_sizes_shape = list(set(v.shape for v in image_sizes if v is not None))[0]
-                image_sizes = [v if v is not None else torch.ones(image_sizes_shape) for v in image_sizes]
-            image_sizes = torch.cat(image_sizes, dim=0)
+            image_grid_thw = torch.cat(image_grid_thw, dim=0)
             inputs = {
                 'input_ids': input_ids,
                 'attention_mask': attention_mask,
                 'pixel_values': pixel_values,
-                'image_sizes': image_sizes,
+                'image_grid_thw': image_grid_thw,
             }
+            # print("input_ids shape: ", input_ids.shape)
+            # print("pixel_values shape: ", pixel_values.shape)
+            # print("attention_mask shape: ", attention_mask.shape)
+            # print("image_grid_thw shape: ", image_grid_thw.shape)
+        else:
+            inputs = {
+                'input_ids': input_ids,
+                'attention_mask': attention_mask,
+            }
+
         return inputs
 
 
@@ -209,7 +228,7 @@ class LlamaCollator:
 
         return qry_inputs, pos_inputs, neg_inputs
     
-    def _process_sigle_data(self, text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist):
+    def _process_single_data(self, text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist):
         if image == None:
             text = str(text)
             text = text.replace("<|image_1|>\n", "<|begin_of_text|>")
@@ -251,10 +270,10 @@ class LlamaCollator:
             text, image = example[text_idx], example[image_idx]
             if isinstance(image, List):
                 for t, img in zip(text, image):
-                    image_exist = self._process_sigle_data(t, img, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
+                    image_exist = self._process_single_data(t, img, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
 
             else:
-                image_exist = self._process_sigle_data(text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
+                image_exist = self._process_single_data(text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
         if len(input_ids)==0:
             return None
         if image_exist:
