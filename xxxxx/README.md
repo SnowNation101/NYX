@@ -30,5 +30,3 @@ python3 retrieve.py \
     --retrieval_path "outputs/retrievals/retrieved_gaokao_bench_0508.json" \
     --top_k 10
 ```
-
-tips: install pytorch -> faiss-cpu -> transformers -> accelerate -> deepspeed

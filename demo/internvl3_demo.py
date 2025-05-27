@@ -111,7 +111,7 @@ def split_model(model_path):
 # If you set `load_in_8bit=False`, you will need at least three 80GB GPUs.
 # path = 'OpenGVLab/InternVL3-8B'
 path = "/fs/archive/share/InternVL3-8B"
-device_map = split_model('InternVL3-8B')
+device_map = split_model(path)
 model = AutoModel.from_pretrained(
     path,
     torch_dtype=torch.bfloat16,
@@ -123,8 +123,12 @@ model = AutoModel.from_pretrained(
 tokenizer = AutoTokenizer.from_pretrained(path, trust_remote_code=True, use_fast=False)
 
 # set the max number of tiles in `max_num`
-pixel_values = load_image('./examples/image1.jpg', max_num=12).to(torch.bfloat16).cuda()
-generation_config = dict(max_new_tokens=1024, do_sample=True)
+pixel_values = load_image(
+    '/fs/archive/share/mm_datasets/mmE5/images/laion/laion_0.jpg',
+      max_num=12).to(torch.bfloat16).cuda()
+generation_config = dict(
+    max_new_tokens=1024, 
+    do_sample=True)
 
 # pure-text conversation (纯文本对话)
 question = 'Hello, who are you?'
@@ -195,19 +199,3 @@ responses = model.batch_chat(tokenizer, pixel_values,
                              generation_config=generation_config)
 for question, response in zip(questions, responses):
     print(f'User: {question}\nAssistant: {response}')
-
-# video multi-round conversation (视频多轮对话)
-def get_index(bound, fps, max_frame, first_idx=0, num_segments=32):
-    if bound:
-        start, end = bound[0], bound[1]
-    else:
-        start, end = -100000, 100000
-    start_idx = max(first_idx, round(start * fps))
-    end_idx = min(round(end * fps), max_frame)
-    seg_size = float(end_idx - start_idx) / num_segments
-    frame_indices = np.array([
-        int(start_idx + (seg_size / 2) + np.round(seg_size * idx))
-        for idx in range(num_segments)
-    ])
-    return frame_indices
-
