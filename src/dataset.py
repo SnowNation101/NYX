@@ -67,6 +67,18 @@ class TrainDataset(Dataset):
         else:
             image = image.resize((336, 336))
         return image
+    
+    def _process_qwen_image(self, image):
+        if image is None:
+            return None
+        if image.width < 30 or image.height < 30:
+            scale = max(30 / image.width, 30 / image.height)
+            new_width = int(image.width * scale)
+            new_height = int(image.height * scale)
+            resized_img = image.resize((new_width, new_height), 
+                                       Image.Resampling.LANCZOS)
+            return resized_img
+        return image
 
     def _get_image(self, img_path):
         if img_path == "":
@@ -77,9 +89,10 @@ class TrainDataset(Dataset):
             if image.size[1] == 1:
                 # print(f"Failed Image: {image}.")
                 image = image.resize((image.size[0], 2))
-        if self.model_args.model_backbone == "llava_next":
-            # TODO: make it configurable
+        elif self.model_args.model_backbone == "llava_next":
             return self._process_image(image, "high")
+        elif self.model_args.model_backbone == "qwen2_5_vl":
+            return 
         else:
             return image
 
