@@ -112,7 +112,7 @@ def split_model(model_path):
 
 class Generator:
     def __init__(self, model_name):
-        if "Qwen2_5" in model_name:
+        if "Qwen2.5" in model_name:
             self.model_type = "qwen2.5-vl"
             self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
                 model_name, 

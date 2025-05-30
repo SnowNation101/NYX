@@ -4,8 +4,6 @@ import torch
 from PIL import Image
 import os
 
-os.environ["CUDA_VISIBLE_DEVICES"] = "0,1,2,3"
-
 path = "/fs/archive/share/Qwen2.5-VL-7B-Instruct"
 
 model = Qwen2_5_VLForConditionalGeneration.from_pretrained(

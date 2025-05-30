@@ -38,22 +38,24 @@ def main():
     elif args.task == "gaokao_bench":
         kb, test = get_gaokao_bench_data()
 
-    # Initialize the retriever and index
-    if not os.path.exists(args.index_path) or args.build_index:
-        print("No existing index found, building a new one...")
-        retriever = EmebeddingRetriever(
-            model_name=args.retriever_path, task=args.task, index=None
-        )
-        retriever.build_index(kb)
-    else:
-        print("Loading retriever with existing index...")
-        retriever = EmebeddingRetriever(
-            model_name=args.retriever_path,
-            task=args.task,
-            index=faiss.read_index(args.index_path),
-        )
+    # # Initialize the retriever and index
+    # if not os.path.exists(args.index_path) or args.build_index:
+    #     print("No existing index found, building a new one...")
+    #     retriever = EmebeddingRetriever(
+    #         model_name=args.retriever_path, task=args.task, index=None
+    #     )
+    #     retriever.build_index(kb)
+    # else:
+    #     print("Loading retriever with existing index...")
+    #     retriever = EmebeddingRetriever(
+    #         model_name=args.retriever_path,
+    #         task=args.task,
+    #         index=faiss.read_index(args.index_path),
+    #     )
 
     results = []
+    
+    retriever = None
 
     if not os.path.exists(args.retrieval_path):
         for query in tqdm(test, desc="Retrieving data"):
@@ -89,20 +91,28 @@ def main():
     for query, result in tqdm(
         zip(test, results), total=len(test), desc="Generating outputs"
     ):
+        generated_result = []
         if args.task == "gaokao_mm":
-            qry_text = (
-                f"题目：{result['question']}\n"
-                f"答案：{result['answer']}\n"
-                f"解析：{result['analysis']}\n"
-                "你可以参考上面的例题来帮助你回答下面这一道高考选择题。请描述你的思考过程，并且给出最终答案（只需给出选项）。"
-                "你需要严格按照下面的格式来进行输出：并且注意包含尖括号<>。\n"
-                "<思考过程>：<<这里是你的思考过程>>\n"
-                "<答案>：<<这里直接给出选项（A/B/C/D）>>\n"
-                f"题目：{query['question']}"
-            )
-            result_images = [Image.open(picture) for picture in result["picture"]]
-            qry_images = [Image.open(picture) for picture in query["picture"]]
-            qry_images = result_images + qry_images
+            for example in result['retrieved']:
+                qry_text = (
+                    f"题目：{example['question']}\n"
+                    f"答案：{example['answer']}\n"
+                    f"解析：{example['analysis']}\n"
+                    "你可以参考上面的例题来帮助你回答下面这一道高考选择题。请描述你的思考过程，并且给出最终答案（只需给出选项）。"
+                    "你需要严格按照下面的格式来进行输出：并且注意包含尖括号<>。\n"
+                    "<思考过程>：<<这里是你的思考过程>>\n"
+                    "<答案>：<<这里直接给出选项（A/B/C/D）>>\n"
+                    f"题目：{query['question']}"
+                )
+                example_images = [Image.open(picture) for picture in example["picture"]]
+                qry_images = [Image.open(picture) for picture in query["picture"]]
+                qry_images = example_images + qry_images
+
+                output_text = generator.generate(
+                    text=qry_text, 
+                    images=qry_images)
+                generated_result.append(output_text[0])
+                
         elif args.task == "gaokao_bench":
             # qry_text = (
             #     f"题目：{result['question']}\n"
@@ -146,10 +156,7 @@ def main():
 
             qry_images = None
             
-        output_text = generator.generate(
-            text=qry_text, 
-            images=qry_images)
-        outputs.append(output_text[0])
+        outputs.append(generated_result)
 
     current_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
     outputs_file_name = f"generated_{current_time}.json"
