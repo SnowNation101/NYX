@@ -152,16 +152,29 @@ class Generator:
                 trust_remote_code=True, 
                 use_fast=False)
 
+    def _apply_chat_template(self, text_input):
+        if self.model_type in ["qwen2_vl", "qwen2.5_vl"]:
+            text_output = (
+                "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n"
+                "<|im_start|>user\n" + text_input + "<|im_end|>\n"
+                "<|im_start|>assistant\n"
+            )
+        return text_output
+            
 
     def generate(self, 
-                 text: str, 
+                 texts: list, 
                  images: list = None, 
                  max_new_tokens: int = 2048) -> str:
-        assert text != None, "Text input cannot be None"
+        """Batch inference for text generation.
+        Args:
+            texts (list): List of text inputs.
+            images (list, optional): List of images.
+            max_new_tokens (int, optional): Maximum number of new tokens to generate. """
+        assert texts != None, "Text input cannot be None"
         if self.model_type in ["qwen2_vl", "qwen2.5_vl"]:
-            # Apply a chat template
-            text = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>\nuser\n" + text + "<|im_end|>\n<|im_start|>assistant]\n"
-            inputs = self.processor(text=text, 
+            texts = [self._apply_chat_template(text) for text in texts]
+            inputs = self.processor(text=texts, 
                                 images=images, 
                                 return_tensors="pt",
                                 truncation=False
@@ -171,10 +184,10 @@ class Generator:
                 out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, 
                                                                 generated_ids)
             ]
-            output_text = self.processor.batch_decode(
+            output_texts = self.processor.batch_decode(
                 generated_ids_trimmed, 
                 skip_special_tokens=True, 
                 clean_up_tokenization_spaces=False
             )
 
-        return output_text
+        return output_texts

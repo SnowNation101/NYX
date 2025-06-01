@@ -1,5 +1,5 @@
 <div align="center">
-    <img src="https://github.com/SnowNation101/NYX/blob/main/assets/Nyx.webp" alt="Nyx Logo" style="width: 50%;" />
+    <img src="https://github.com/SnowNation101/NYX/blob/main/assets/Nyx.webp" alt="Nyx Logo" style="width: 35%;" />
 </div>
 
 <h1 align="center"> 🌓 Nyx: Unified Multimodal Retriever for MRAG </a></h1>
@@ -38,11 +38,9 @@ python3 eval_gaokao_bench.py \
 #!/bin/bash
 
 python3 inference.py \
-    --task "gaokao_bench" \
-    --generator_path "/fs/archive/share/Qwen2_5-VL-7B-Instruct" \
-    --retriever_path "outputs/models/Qwen2_mme5" \
-    --index_path "outputs/indexes/gaokao_bench_index.faiss" \
-    --retrieval_path "outputs/retrievals/retrieved_gaokao_bench.json" \
+    --task "aokvqa" \
+    --generator_path "/fs/archive/share/Qwen2.5-VL-7B-Instruct" \
+    --retrieval_path "outputs/retrievals/retrieved_aokvqa_0601.json" \
 
 ```
 

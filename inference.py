@@ -11,6 +11,7 @@ from tqdm import tqdm
 from config import TASKS
 
 from src.utils.process_gaokao import get_gaokao_bench_data, get_gaokao_mm_data
+from src.utils.load_aokvqa import get_aokvqa_data
 from src.generator import Generator
 from src.retriever import EmebeddingRetriever
 
@@ -19,11 +20,9 @@ def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--task", type=str, required=True, help="Task name")
-    parser.add_argument("--retriever_path", type=str, required=True, help="Path to the retriever model")
     parser.add_argument("--generator_path", type=str, required=True, help="Path to the generator model")
-    parser.add_argument("--index_path", type=str, required=True, help="Path to the faiss index file")
-    parser.add_argument("--build_index", action="store_true", help="Force build of FAISS index")
     parser.add_argument("--retrieval_path",type=str,required=True,help="Path to the retrieved data file",)
+    parser.add_argument("--batch_size", type=int, default=4, help="Batch size for generation")
     args = parser.parse_args()
     
     assert (args.task in TASKS), f"Task {args.task} not supported. Supported tasks: {TASKS}"
@@ -33,53 +32,12 @@ def main():
         kb, test = get_gaokao_mm_data()
     elif args.task == "gaokao_bench":
         kb, test = get_gaokao_bench_data()
+    elif args.task == "aokvqa":
+        kb, _, test = get_aokvqa_data()
 
-    # # Initialize the retriever and index
-    # if not os.path.exists(args.index_path) or args.build_index:
-    #     print("No existing index found, building a new one...")
-    #     retriever = EmebeddingRetriever(
-    #         model_name=args.retriever_path, task=args.task, index=None
-    #     )
-    #     retriever.build_index(kb)
-    # else:
-    #     print("Loading retriever with existing index...")
-    #     retriever = EmebeddingRetriever(
-    #         model_name=args.retriever_path,
-    #         task=args.task,
-    #         index=faiss.read_index(args.index_path),
-    #     )
-
-    results = []
-    
-    retriever = None
-
-    if not os.path.exists(args.retrieval_path):
-        for query in tqdm(test, desc="Retrieving data"):
-            if args.task == "gaokao_mm":
-                qry_text = f"<|im_start|>请根据下面的高考题目检索出最相关的题目。\n{query['question']}<|im_end|>"
-                qry_image_paths = query['picture']
-                qry_images = [Image.open(picture) for picture in qry_image_paths]
-                D, I = retriever.retrieve(
-                    qry_text=qry_text, 
-                    qry_images=qry_images, 
-                    top_k=1)
-            elif args.task == "gaokao_bench":
-                qry_text = f"<|im_start|>请根据下面的高考题目检索出最相关的题目。\n{query['question']}<|im_end|>"
-                D, I = retriever.retrieve(
-                    qry_text=qry_text, 
-                    qry_images=None, 
-                    top_k=1)
-            result = kb[I[0][0]]
-            result["distance"] = float(D[0][0])
-            results.append(result)
-        
-        # Save the retrieval results
-        with open(args.retrieval_path, "w", encoding="utf-8") as f:
-            json.dump(results, f, ensure_ascii=False, indent=4)
-        print(f"Retrieval results saved to {args.retrieval_path}")
-    else:
-        with open(args.retrieval_path, "r", encoding="utf-8") as f:
-            results = json.load(f)
+    assert os.path.exists(args.retrieval_path), f"Retrieval result {args.retrieval_path} does not exist."
+    with open(args.retrieval_path, "r", encoding="utf-8") as f:
+        results = json.load(f)
 
     generator = Generator(args.generator_path)
     outputs = []
@@ -108,18 +66,8 @@ def main():
                     text=qry_text, 
                     images=qry_images)
                 generated_result.append(output_text[0])
-                
         elif args.task == "gaokao_bench":
-            # qry_text = (
-            #     f"题目：{result['question']}\n"
-            #     f"答案：{result['answer']}\n"
-            #     f"解析：{result['analysis']}\n"
-            #     "你可以参考上面的例题来帮助你回答下面这一道高考选择题。请描述你的思考过程，并且给出最终答案（只需给出选项）。"
-            #     "你需要严格按照下面的格式来进行输出：并且注意包含尖括号<>。\n"
-            #     "<思考过程>：<<这里是你的思考过程>>\n"
-            #     "<答案>：<<这里直接给出选项（A/B/C/D）>>\n"
-            #     f"题目：{query['question']}"
-            # )
+            # TODO: Add support for gaokao_bench
             qry_text = (
                 f"题目：{result['question']}\n"
                 f"答案：{result['answer']}\n"
@@ -151,12 +99,32 @@ def main():
             )
 
             qry_images = None
-            
+        elif args.task == "aokvqa":
+            for example in result['retrieved']:
+                qry_text = (
+                    f"Question: {example['question']}\n"
+                    f"Choices: {', '.join(example['choices'])}\n"
+                    f"Answer: {example['choices'][example['correct_choice_idx']]}\n"
+                    f"Analysis: {', '.join(example['rationales'])}\n"
+                    "You can refer to the example above to help you answer the following question. "
+                    "Please describe your thought process and provide the final answer (only the option). "
+                    "You need to strictly follow the format below for output, and remember to include angle brackets <>.\n"
+                    "<Thought Process>: <<Here is your thought process>>\n"
+                    "<Answer>: <<Here is the option>>\n"
+                    f"Question: {query['question']}\n"
+                    f"Choices: {', '.join(query['choices'])}\n"
+                )
+                example_images = [Image.open(example['image_path'])]
+                qry_images = [Image.open(query['image_path'])]
+                qry_images = example_images + qry_images
+
+                output_text = generator.generate(
+                    text=qry_text, 
+                    images=qry_images)
+                generated_result.append(output_text[0])
         outputs.append(generated_result)
 
-    current_time = time.strftime("%y%m%d_%H%M%S", time.localtime())
-    outputs_file_name = f"generated_{current_time}.json"
-    outputs_file_path = os.path.join("outputs/generations", outputs_file_name)
+    outputs_file_path = os.path.join("outputs/generations", f"generated_{time.strftime('%y%m%d_%H%M%S')}.json")
     with open(outputs_file_path, "w", encoding="utf-8") as f:
         # ensure_ascii=False to allow for non-ASCII characters (e.g. Chinese)
         json.dump(outputs, f, ensure_ascii=False, indent=4)
