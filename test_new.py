@@ -18,8 +18,6 @@ def main():
 
     keyword_overall_stats = defaultdict(lambda: {"correct": 0, "total": 0})
     keyword_first_answer_stats = defaultdict(lambda: {"correct": 0, "total": 0})
-    
-    # New: To store the distribution of correct answer attempts
     correct_attempt_distribution = defaultdict(int)
 
     for i, query in tqdm(enumerate(mm_test), total=len(mm_test)):
@@ -36,7 +34,7 @@ def main():
         for j in range(len(outputs[i])):
             output_answer = outputs[i][j]
             predicted_answer = extract_answer(output_answer)
-            
+             
             if correct_answer == predicted_answer:
                 keyword_overall_stats[keyword]["correct"] += 1
                 found_correct_in_any_output = True

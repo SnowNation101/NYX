@@ -113,7 +113,7 @@ def split_model(model_path):
 class Generator:
     def __init__(self, model_name):
         if "Qwen2.5" in model_name:
-            self.model_type = "qwen2.5-vl"
+            self.model_type = "qwen2.5_vl"
             self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
                 model_name, 
                 torch_dtype=torch.bfloat16,
@@ -158,7 +158,7 @@ class Generator:
                  images: list = None, 
                  max_new_tokens: int = 2048) -> str:
         assert text != None, "Text input cannot be None"
-        if self.model_type in ["qwen2-vl", "qwen2.5-vl"]:
+        if self.model_type in ["qwen2_vl", "qwen2.5_vl"]:
             # Apply a chat template
             text = "<|im_start|>system\nYou are a helpful assistant.<|im_end|>\n<|im_start|>\nuser\n" + text + "<|im_end|>\n<|im_start|>assistant]\n"
             inputs = self.processor(text=text, 

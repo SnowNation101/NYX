@@ -8,15 +8,11 @@ import numpy as np
 import torch
 from PIL import Image
 from tqdm import tqdm
+from config import TASKS
 
-from process_gaokao import get_gaokao_bench_data, get_gaokao_mm_data
+from src.utils.process_gaokao import get_gaokao_bench_data, get_gaokao_mm_data
 from src.generator import Generator
 from src.retriever import EmebeddingRetriever
-
-TASKS = [
-    "gaokao_mm",
-    "gaokao_bench",
-]
 
 
 def main():
