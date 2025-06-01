@@ -1,4 +1,8 @@
-# Multimodal Retriever for MRAG
+<div align="center">
+    <img src="https://github.com/SnowNation101/NYX/blob/main/assets/Nyx.webp" alt="Nyx Logo" style="width: 50%;" />
+</div>
+
+<h1 align="center"> 🌓 Nyx: Unified Multimodal Retriever for MRAG </a></h1>
 
 ## TODO
 
