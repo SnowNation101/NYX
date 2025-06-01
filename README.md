@@ -4,6 +4,16 @@
 
 <h1 align="center"> 🌓 Nyx: Unified Multimodal Retriever for MRAG </a></h1>
 
+<div align="center"> 
+
+<img alt="Arxiv Paper" src="https://img.shields.io/badge/paper-arXiv-b5212f.svg?logo=arxiv">
+<img alt="GitHub License" src="https://img.shields.io/github/license/SnowNation101/Nyx?color=lightgreen">
+<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/SnowNation101/Nyx?style=flat&logo=github&color=lightblue">
+
+</div>
+
+**This project is still under development and is not yet the final release version.**
+
 ## TODO
 
 - [ ] Get feedback
