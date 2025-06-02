@@ -39,7 +39,7 @@ def main():
     elif args.task == "gaokao_bench":
         kb, test = get_gaokao_bench_data()
     elif args.task == "aokvqa":
-        kb, val, test = get_aokvqa_data()
+        kb, test = get_aokvqa_data()
 
     retriever = EmebeddingRetriever(
         ckpt_path=args.ckpt_path,

@@ -177,7 +177,8 @@ class Generator:
             inputs = self.processor(text=texts, 
                                 images=images, 
                                 return_tensors="pt",
-                                truncation=False
+                                padding=True,
+                                padding_side='left'
                                 ).to(self.model.device)
             generated_ids = self.model.generate(**inputs, max_new_tokens=max_new_tokens)
             generated_ids_trimmed = [

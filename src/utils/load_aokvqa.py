@@ -24,12 +24,12 @@ def get_coco_path(split, image_id, coco_dir):
 def get_aokvqa_data():
     train_dataset = load_aokvqa(aokvqa_dir, 'train')
     val_dataset = load_aokvqa(aokvqa_dir, 'val')
-    test_dataset = load_aokvqa(aokvqa_dir, 'test')
+    # test_dataset = load_aokvqa(aokvqa_dir, 'test')
 
-    return train_dataset, val_dataset, test_dataset
+    return train_dataset, val_dataset
 
 if __name__ == "__main__":
     train_dataset, val_dataset, test_dataset = get_aokvqa_data()
     print(f"Train dataset size: {len(train_dataset)}")
     print(f"Validation dataset size: {len(val_dataset)}")
-    print(f"Test dataset size: {len(test_dataset)}")
+    print(f"Test dataset size: {len(test_dataset)}") # Print the first item in the test dataset to verify structure
