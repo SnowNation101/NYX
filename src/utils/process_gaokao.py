@@ -85,3 +85,11 @@ if __name__ == "__main__":
     print(len(gk_test))
     print(len(mm_kb))
     print(len(mm_test))
+
+    collect = []
+    for data in mm_test:
+        if len(data["picture"]) > 4:
+            collect.append(data)
+
+
+    print(collect[1])

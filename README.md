@@ -22,7 +22,20 @@
 
 ## Prepare
 
+We recommend using **Conda** for package management.
+
+```bash
+conda create -n nyx python=3.11
+conda activate nyx
+pip install -r requirements.txt
+```
+
+Our implementation uses `torch==2.4.0`, `faiss-cpu==1.8.0`, and `transformers==4.52.2`. Please note that `faiss-cpu` and `transformers` might have `numpy` version conflicts. We prefer keeping `numpy` at version `1.26.4` (the version compatible with `faiss-cpu`), so you may need to uninstall any newer `numpy` versions.
+
+
 tips: install pytorch -> faiss-cpu -> transformers -> accelerate -> deepspeed
+
+
 
 ## Running Scripts
 
