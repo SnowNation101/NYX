@@ -68,3 +68,12 @@ python3 retrieve.py \
     --top_k 10
 ```
 
+
+
+### Download OBELICS images
+```bash
+cd download_obelics
+python3 download_images.py > log.txt 2>&1
+
+tail -f log.txt
+```

@@ -1,0 +1,213 @@
+== Processing entry 1/141047697...== 
+Trying to download image from URL: https://eppc.org/wp-content/uploads/2017/07/shutterstock_636139745-1024x683.jpg
+Error: Access forbidden (403 Forbidden) - https://eppc.org/wp-content/uploads/2017/07/shutterstock_636139745-1024x683.jpg. This might be due to website security measures. Try using appropriate User-Agent and Referer headers.
+Skipping entry 0 due to failed image download: https://eppc.org/wp-content/uploads/2017/07/shutterstock_636139745-1024x683.jpg
+== Processing entry 2/141047697...== 
+Trying to download image from URL: https://cdn.motor1.com/images/mgl/oRKO0/s1/lamborghini-urus-original-carbon-fiber-accessories.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/0.jpg
+This entry has been processed and saved.
+== Processing entry 3/141047697...== 
+Trying to download image from URL: https://slidelegend.com/img/60x80/management-factors-influencing-open-innovation-div_59c212ac1723dd1242167485.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/1.jpg
+This entry has been processed and saved.
+== Processing entry 4/141047697...== 
+Trying to download image from URL: https://www.henryusa.com/wp-content/uploads/2022/07/Kalel_buttstock2-480x407.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/2.jpg
+Trying to download image from URL: https://www.henryusa.com/wp-content/uploads/2021/06/kalel_1200px-480x480.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/3.jpg
+This entry has been processed and saved.
+== Processing entry 5/141047697...== 
+Trying to download image from URL: https://www.debate.com.mx/__export/1631449386230/sites/debate/img/2021/09/12/turistas-mazatlan-2.jpg_1187572215.jpg
+Error: Access forbidden (403 Forbidden) - https://www.debate.com.mx/__export/1631449386230/sites/debate/img/2021/09/12/turistas-mazatlan-2.jpg_1187572215.jpg. This might be due to website security measures. Try using appropriate User-Agent and Referer headers.
+Skipping entry 4 due to failed image download: https://www.debate.com.mx/__export/1631449386230/sites/debate/img/2021/09/12/turistas-mazatlan-2.jpg_1187572215.jpg
+== Processing entry 6/141047697...== 
+Trying to download image from URL: https://www.glamsham.com/wp-content/uploads/2021/03/f8f324f76b556faeda82528199cc811b.jpg
+Error: Access forbidden (403 Forbidden) - https://www.glamsham.com/wp-content/uploads/2021/03/f8f324f76b556faeda82528199cc811b.jpg. This might be due to website security measures. Try using appropriate User-Agent and Referer headers.
+Skipping entry 5 due to failed image download: https://www.glamsham.com/wp-content/uploads/2021/03/f8f324f76b556faeda82528199cc811b.jpg
+== Processing entry 7/141047697...== 
+Trying to download image from URL: http://otlsports.com/wp-content/uploads/2019/05/Virginia-basketball-330x186.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/4.jpg
+This entry has been processed and saved.
+== Processing entry 8/141047697...== 
+Trying to download image from URL: https://birmingcabbie.files.wordpress.com/2013/01/payday-loan.png?w=625
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/5.jpg
+Trying to download image from URL: https://birmingcabbie.files.wordpress.com/2013/01/norwood-018.jpg?w=225&h=300
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/6.jpg
+This entry has been processed and saved.
+== Processing entry 9/141047697...== 
+Trying to download image from URL: https://www.vagabondinn.com/resourcefiles/blogsmallimages/ccut-title.jpg
+Error: Image not found or invalid URL (404 Not Found) - https://www.vagabondinn.com/resourcefiles/blogsmallimages/ccut-title.jpg
+Skipping entry 8 due to failed image download: https://www.vagabondinn.com/resourcefiles/blogsmallimages/ccut-title.jpg
+== Processing entry 10/141047697...== 
+Trying to download image from URL: https://res.cloudinary.com/the-weekly-gripe/image/fetch/https://www.weeklygripe.co.uk/AImg/issues.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/7.jpg
+This entry has been processed and saved.
+== Processing entry 11/141047697...== 
+Trying to download image from URL: http://cdn.shopify.com/s/files/1/0278/5473/3360/articles/Japanese_Tea_Blog_1024x1024.jpg?v=1629313777
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/8.jpg
+This entry has been processed and saved.
+== Processing entry 12/141047697...== 
+Trying to download image from URL: http://res.heraldm.com/content/image/2021/05/04/20210504000952_0.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/9.jpg
+This entry has been processed and saved.
+== Processing entry 13/141047697...== 
+Trying to download image from URL: https://i.stack.imgur.com/BrjpG.jpg
+Error: Could not connect to the server. Please check your network connection or URL - HTTPSConnectionPool(host='i.stack.imgur.com', port=443): Max retries exceeded with url: /BrjpG.jpg (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x14a190706a10>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+Skipping entry 12 due to failed image download: https://i.stack.imgur.com/BrjpG.jpg
+== Processing entry 14/141047697...== 
+Trying to download image from URL: https://www.toptipz.com.ng/wp-content/uploads/2020/02/5e59569e1f900-340x215.png
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/10.jpg
+Trying to download image from URL: https://www.toptipz.com.ng/wp-content/uploads/2020/02/5e591b9f8a4b0-348x215.jpeg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/11.jpg
+This entry has been processed and saved.
+== Processing entry 15/141047697...== 
+Trying to download image from URL: https://gamecocksonline.com/imgproxy/oRJaXYMtWVCyAUZaLJ2WtaL8Mw-eiS8JgPl57dbcMIg/fit/3840/2160/ce/0/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2dhbWVjb2Nrc29ubGluZS1jb20vMjAxNy8wOC9kY2MwZWJlNS05ODk4OTY2LmpwZWc.png
+Error: Could not connect to the server. Please check your network connection or URL - HTTPSConnectionPool(host='gamecocksonline.com', port=443): Max retries exceeded with url: /imgproxy/oRJaXYMtWVCyAUZaLJ2WtaL8Mw-eiS8JgPl57dbcMIg/fit/3840/2160/ce/0/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2dhbWVjb2Nrc29ubGluZS1jb20vMjAxNy8wOC9kY2MwZWJlNS05ODk4OTY2LmpwZWc.png (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x14a182569090>, 'Connection to gamecocksonline.com timed out. (connect timeout=10)'))
+Skipping entry 14 due to failed image download: https://gamecocksonline.com/imgproxy/oRJaXYMtWVCyAUZaLJ2WtaL8Mw-eiS8JgPl57dbcMIg/fit/3840/2160/ce/0/aHR0cHM6Ly9zdG9yYWdlLmdvb2dsZWFwaXMuY29tL2dhbWVjb2Nrc29ubGluZS1jb20vMjAxNy8wOC9kY2MwZWJlNS05ODk4OTY2LmpwZWc.png
+== Processing entry 16/141047697...== 
+Trying to download image from URL: https://paulinepark.com/wp-content/uploads/2014/06/gauguin56-300x231.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/12.jpg
+Trying to download image from URL: https://paulinepark.com/wp-content/uploads/2014/06/Paul-Gauguin-Oviri-Savage-001-183x300.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/13.jpg
+This entry has been processed and saved.
+== Processing entry 17/141047697...== 
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/g-_photoshop_img_2615.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/14.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2599.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/15.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2593.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/16.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2592.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/17.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2608.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/18.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2630.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/19.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2625.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/20.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2686.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/21.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2690.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/22.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2698.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/23.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2710.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/24.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2868.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/25.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2621.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/26.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2826.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/27.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2722.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/28.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2788.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/29.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2751.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/30.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2790.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/31.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2768.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/32.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2813.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/33.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2816.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/34.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2862.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/35.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2874.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/36.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/g-_photoshop_img_2844.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/37.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2809.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/38.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2878.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/39.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2902.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/40.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2952.jpg?w=1088
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/41.jpg
+Trying to download image from URL: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2984.jpg?w=1088
+Error: Download timed out. Exceeded 10 seconds - HTTPSConnectionPool(host='talesofthetravelbug.wordpress.com', port=443): Read timed out. (read timeout=10)
+Skipping entry 16 due to failed image download: https://talesofthetravelbug.files.wordpress.com/2016/02/img_2984.jpg?w=1088
+== Processing entry 18/141047697...== 
+Trying to download image from URL: https://minnesota.cbslocal.com/wp-content/uploads/sites/15909630/2018/08/new-brighton-fire.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/14.jpg
+This entry has been processed and saved.
+== Processing entry 19/141047697...== 
+Trying to download image from URL: https://lh5.googleusercontent.com/proxy/WExIptbY4UDQvirHFf13ljYTSeTve-er8gd8tXgZZFZ0SmjBMGFL85yWBk20ICJbY5va9-ien4RfhqjTxf0y0kKkI4E7vQ5Wa8XszzIZkaACnn03qlGzNg=s0-d
+Error: Could not connect to the server. Please check your network connection or URL - HTTPSConnectionPool(host='lh5.googleusercontent.com', port=443): Max retries exceeded with url: /proxy/WExIptbY4UDQvirHFf13ljYTSeTve-er8gd8tXgZZFZ0SmjBMGFL85yWBk20ICJbY5va9-ien4RfhqjTxf0y0kKkI4E7vQ5Wa8XszzIZkaACnn03qlGzNg=s0-d (Caused by NewConnectionError('<urllib3.connection.HTTPSConnection object at 0x14a1825a3b90>: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+Skipping entry 18 due to failed image download: https://lh5.googleusercontent.com/proxy/WExIptbY4UDQvirHFf13ljYTSeTve-er8gd8tXgZZFZ0SmjBMGFL85yWBk20ICJbY5va9-ien4RfhqjTxf0y0kKkI4E7vQ5Wa8XszzIZkaACnn03qlGzNg=s0-d
+== Processing entry 20/141047697...== 
+Trying to download image from URL: https://is3-ssl.mzstatic.com/image/thumb/Podcasts124/v4/d4/2a/8a/d42a8aae-bbef-0505-eaa8-6b80db57100a/mza_13260582032712560114.jpg/600x600bb.jpg
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/15.jpg
+This entry has been processed and saved.
+== Processing entry 21/141047697...== 
+Trying to download image from URL: https://vidmid.com/upload/news/image_1607022019_96572726.jpg
+Error: Image not found or invalid URL (404 Not Found) - https://vidmid.com/upload/news/image_1607022019_96572726.jpg
+Skipping entry 20 due to failed image download: https://vidmid.com/upload/news/image_1607022019_96572726.jpg
+== Processing entry 22/141047697...== 
+Trying to download image from URL: https://www.etoren.com/upload/images/0.73465000_1614219269_fujifilm-x-t200-body-kit-box-champagne-gold.jpg
+Error: Could not connect to the server. Please check your network connection or URL - HTTPSConnectionPool(host='www.etoren.com', port=443): Read timed out.
+Skipping entry 21 due to failed image download: https://www.etoren.com/upload/images/0.73465000_1614219269_fujifilm-x-t200-body-kit-box-champagne-gold.jpg
+== Processing entry 23/141047697...== 
+Trying to download image from URL: https://ionigeria.com/wp-content/uploads/2021/12/James-Webb-323x330.jpg
+Error: Could not connect to the server. Please check your network connection or URL - HTTPSConnectionPool(host='ionigeria.com', port=443): Max retries exceeded with url: /wp-content/uploads/2021/12/James-Webb-323x330.jpg (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x14a1825a1950>, 'Connection to ionigeria.com timed out. (connect timeout=10)'))
+Skipping entry 22 due to failed image download: https://ionigeria.com/wp-content/uploads/2021/12/James-Webb-323x330.jpg
+== Processing entry 24/141047697...== 
+Trying to download image from URL: https://www.gannett-cdn.com/presto/2018/10/26/PWAU/2a506b32-52f3-4269-bbc5-9a54feafe20c-WDHBrd2_09-05-2017_Herald_1_A001__2017_09_04_IMG_636397938897683883_W_1_1_0UJGPN5O_L1091358173_IMG_636397938897683883_W_1_1_0UJGPN5O.jpg?width=540&height=&fit=bounds&auto=webp
+Error: Access forbidden (403 Forbidden) - https://www.gannett-cdn.com/presto/2018/10/26/PWAU/2a506b32-52f3-4269-bbc5-9a54feafe20c-WDHBrd2_09-05-2017_Herald_1_A001__2017_09_04_IMG_636397938897683883_W_1_1_0UJGPN5O_L1091358173_IMG_636397938897683883_W_1_1_0UJGPN5O.jpg?width=540&height=&fit=bounds&auto=webp. This might be due to website security measures. Try using appropriate User-Agent and Referer headers.
+Skipping entry 23 due to failed image download: https://www.gannett-cdn.com/presto/2018/10/26/PWAU/2a506b32-52f3-4269-bbc5-9a54feafe20c-WDHBrd2_09-05-2017_Herald_1_A001__2017_09_04_IMG_636397938897683883_W_1_1_0UJGPN5O_L1091358173_IMG_636397938897683883_W_1_1_0UJGPN5O.jpg?width=540&height=&fit=bounds&auto=webp
+== Processing entry 25/141047697...== 
+Trying to download image from URL: https://cdn.shopify.com/s/files/1/0025/8002/1309/files/iberico-ham-tags-01-png.png?v=1635779263
+Image successfully downloaded to: /fs/archive/share/mm_datasets/obelics_images/16.jpg
+Trying to download image from URL: https://cdn.shopify.com/s/files/1/0025/8002/1309/files/Iberico_pigs_480x480.jpg?v=1635784392
+Traceback (most recent call last):
+  File "/home/u2024001042/workspace/nyx/download_obelics/download_images.py", line 93, in <module>
+    flag = download_image_from_url(image_url=image_url, 
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/workspace/nyx/download_obelics/download_images.py", line 36, in download_image_from_url
+    response = requests.get(image_url, stream=True, timeout=timeout, headers=headers) 
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/requests/api.py", line 73, in get
+    return request("get", url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+           ^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/connectionpool.py", line 787, in urlopen
+    response = self._make_request(
+               ^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/connectionpool.py", line 464, in _make_request
+    self._validate_conn(conn)
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/connectionpool.py", line 1093, in _validate_conn
+    conn.connect()
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/connection.py", line 741, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/connection.py", line 920, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+               ^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/util/ssl_.py", line 480, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/site-packages/urllib3/util/ssl_.py", line 524, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/ssl.py", line 517, in wrap_socket
+    return self.sslsocket_class._create(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/ssl.py", line 1104, in _create
+    self.do_handshake()
+  File "/home/u2024001042/.conda/envs/mrag/lib/python3.11/ssl.py", line 1382, in do_handshake
+    self._sslobj.do_handshake()
+KeyboardInterrupt
