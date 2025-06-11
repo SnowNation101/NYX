@@ -59,9 +59,29 @@ export WANDB_PROJECT="Nyx"
 export WANDB_LOG_MODEL="checkpoint"
 export WANDB_WATCH="false"
 
+# deepspeed --num_gpus 8 --master_port 12345 train.py --deepspeed "ds_config.json" \
+#     --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5" \
+#     --synthetic_subset_name Retrieval \
+#     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
+#     --num_sample_per_subset 50000 \
+#     --dataloader_num_workers 4 \
+#     --image_dir "/fs/archive/share/mm_datasets/mmE5/" \
+#     --gradient_checkpointing True \
+#     --num_train_epochs 1 \
+#     --lora --lora_r 16 \
+#     --max_len 999999 --output_dir "${OUTPUT_DIR}" --logging_steps 5 \
+#     --lr_scheduler_type linear --learning_rate 1e-5 --max_grad_norm 5.0 \
+#     --warmup_ratio 0.05 --save_steps 100 --save_total_limit 3 --normalize True \
+#     --temperature 0.02 \
+#     --model_backbone "${MODEL_BACKBONE}" \
+#     --processor_name "${PROCESSOR_NAME}" \
+#     --resume_from_checkpoint "${OUTPUT_DIR}" \
+#     --per_device_train_batch_size 16 --gradient_accumulation_steps 4 \
+#     --negative_ratio 3 \
+#     --report_to "wandb"
+
 deepspeed --num_gpus 8 --master_port 12345 train.py --deepspeed "ds_config.json" \
-    --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5" \
-    --synthetic_subset_name Retrieval \
+    --reward_dataset_path
     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
     --num_sample_per_subset 50000 \
     --dataloader_num_workers 4 \

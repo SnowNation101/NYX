@@ -101,6 +101,9 @@ class DataArguments:
     negative_ratio: int = field(
         default=0, metadata={"help": "The number of hard negatives"}
     )
+    feedback_data_path: str = field(
+        default=None, metadata={"help": "feedback data path"}
+    )
 
 
 @dataclass

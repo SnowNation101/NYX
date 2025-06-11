@@ -51,6 +51,9 @@ def cal_score(output_file):
         print(f"  - Accuracy: {stats['accuracy']:.4f}\n")
 
 
+def make_doc(question, answer, analysis):
+    return f"问题: {question}\n答案: {answer}\n解析: {analysis}\n"
+
 
 def get_reward_dataset(output_file, retrieved_docs_file):
     with open(output_file, "r", encoding='utf-8') as f:
@@ -60,7 +63,7 @@ def get_reward_dataset(output_file, retrieved_docs_file):
         retrieved_docs = json.load(f)
 
     _, mm_test = get_gaokao_mm_data()
-    reward_dataset = []
+    feedback_dataset = []
 
     for i, query in tqdm(enumerate(mm_test), total=len(mm_test)):
         correct_answer = query["answer"][0]
@@ -83,15 +86,22 @@ def get_reward_dataset(output_file, retrieved_docs_file):
             "qry_img": entry['query']['picture'],
             "qry_txt": "请检索最相关的高考题。" + entry['query']['question'],
             "pos_img": entry['pos']['picture'],
-            "pos_txt": entry['pos']['text'],
+            "pos_txt": make_doc(
+                entry['pos']['question'],
+                entry['pos']['answer'],
+                entry['pos']['analysis']
+            ),
             "neg_img": [doc['picture'] for doc in entry['neg']],
-            "neg_txt": [doc['text'] for doc in entry['neg']],
+            "neg_txt": [make_doc(
+                doc['question'],
+                doc['answer'],
+                doc['analysis']
+            ) for doc in entry['neg']],
         }
 
+        feedback_dataset.append(new_entry)
 
-        reward_dataset.append(new_entry)
-
-    return reward_dataset
+    return feedback_dataset
 
 
 def main():
@@ -100,7 +110,7 @@ def main():
     # cal_score(output_file)
     reward_dataset = get_reward_dataset(output_file, retrieved_docs_file)
     
-    with open("outputs/preference_data/pref_gaokao_mm_0610.json", "w", encoding='utf-8') as f:
+    with open("outputs/feedback/feedback_gaokao_mm_0611.json", "w", encoding='utf-8') as f:
         json.dump(reward_dataset, f, ensure_ascii=False, indent=4)
 
 
