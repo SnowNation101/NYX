@@ -6,9 +6,9 @@
 
 <div align="center"> 
 
-<img alt="Arxiv Paper" src="https://img.shields.io/badge/paper-arXiv-b5212f.svg?logo=arxiv">
-<img alt="GitHub License" src="https://img.shields.io/github/license/SnowNation101/Nyx?color=lightgreen">
-<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/SnowNation101/Nyx?style=flat&logo=github&color=lightblue">
+<a href="https://arxiv.org/" target="_blank"><img alt="Arxiv Paper" src="https://img.shields.io/badge/paper-arXiv-b5212f.svg?logo=arxiv"></a>
+<a href="https://opensource.org/license/MIT" target="_blank"><img alt="GitHub License" src="https://img.shields.io/github/license/SnowNation101/Nyx?color=lightgreen"></a>
+<a href="https://github.com/SnowNation101/NYX" target="_self"><img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/SnowNation101/Nyx?style=flat&logo=github&color=lightblue"></a>
 
 </div>
 
