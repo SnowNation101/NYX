@@ -67,13 +67,3 @@ python3 retrieve.py \
     --output_path "outputs/retrievals/retrieved_aokvqa_0601.json" \
     --top_k 10
 ```
-
-
-
-### Download OBELICS images
-```bash
-cd download_obelics
-python3 download_images.py > log.txt 2>&1
-
-tail -f log.txt
-```
