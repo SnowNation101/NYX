@@ -175,10 +175,12 @@ checkpoint/
 wandb/
 
 draw_figure.ipynb
+generated_qa.json
 
 # My testing files...
 t.ipynb
 t.py
+tt.py
 test.py
 try.py
 try_load.py

@@ -1,10 +1,7 @@
 from datasets import load_dataset
-
-data_dir = "/fs/archive/share/mm_datasets/OBELICS"
-
-
 from huggingface_hub import snapshot_download
 
+data_dir = "/fs/archive/share/mm_datasets/OBELICS"
 
 snapshot_download(
     repo_id="HuggingFaceM4/OBELICS",
