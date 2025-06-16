@@ -16,9 +16,9 @@
 
 ## TODO
 
-- [ ] Get feedback
+- [x] Get feedback
 - [ ] Train with feedback
-- [ ] Batch indexing (encode)
+- [ ] vLLM integration
 
 ## Prepare
 
@@ -67,3 +67,14 @@ python3 retrieve.py \
     --output_path "outputs/retrievals/retrieved_aokvqa_0601.json" \
     --top_k 10
 ```
+
+## Acknowledgements
+
+The core implementation of this project is built upon [VLM2Vec](https://github.com/TIGER-AI-Lab/VLM2Vec). We extend our sincere gratitude to the original authors for their foundational work.
+
+We also want to acknowledge and thank the developers of these essential tools that made our work possible:
+- [vLLM](https://github.com/vllm-project/vllm) for efficient LLM inferencing
+- [FlashAttention](https://github.com/Dao-AILab/flash-attention) for optimized attention computation
+- [DeepSpeed](https://github.com/deepspeedai/DeepSpeed) for distributed training acceleration
+
+Our work stands on the shoulders of these remarkable open-source projects and the generous research community.
