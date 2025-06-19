@@ -60,8 +60,14 @@ export WANDB_LOG_MODEL="checkpoint"
 export WANDB_WATCH="false"
 
 deepspeed --num_gpus 8 --master_port 12345 train.py --deepspeed "ds_config.json" \
-    --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5" \
-    --synthetic_subset_name Retrieval \
+    --dataset_name "/fs/archive/share/mm_datasets/mmE5/mmE5-MMEB-hardneg" \
+    --subset_name TAT-DQA ArxivQA InfoSeek_it2t InfoSeek_it2it ImageNet_1K N24News HatefulMemes SUN397 VOC2007 InfographicsVQA ChartQA A-OKVQA DocVQA OK-VQA Visual7W VisDial CIRR NIGHTS WebQA VisualNews_i2t VisualNews_t2i MSCOCO_i2t MSCOCO_t2i MSCOCO \
+    --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5/mmE5-synthetic" \
+    --synthetic_subset_name Retrieval VQA \
+    --text2text_dataset_name "" \
+    --text2text_subset_name "" \
+    --mixed_modal_dataset_name "" \
+    --mixed_modal_subset_name "" \
     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
     --num_sample_per_subset 50000 \
     --dataloader_num_workers 4 \
