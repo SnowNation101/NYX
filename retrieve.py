@@ -9,10 +9,10 @@ import torch
 from PIL import Image
 from tqdm import tqdm
 
-from src.utils.process_gaokao import get_gaokao_bench_data, get_gaokao_mm_data
-from src.utils.load_aokvqa import get_aokvqa_data
+from nyx.utils.process_gaokao import get_gaokao_bench_data, get_gaokao_mm_data
+from nyx.utils.load_aokvqa import get_aokvqa_data
 # from src.generator import Generator
-from src.retriever import EmebeddingRetriever
+from nyx.retriever import EmebeddingRetriever
 
 TASKS = [
     "gaokao_mm",

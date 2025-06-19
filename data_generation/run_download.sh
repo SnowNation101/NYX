@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PYTHON_SCRIPT="load_data.py"
+PYTHON_SCRIPT="download_data.py"
 
 echo "Starting dataset download and loading process..."
 echo "This script will repeatedly run $PYTHON_SCRIPT until the dataset is successfully loaded."

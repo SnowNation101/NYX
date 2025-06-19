@@ -15,3 +15,11 @@ run all the cells, the truncted data will be saved to `obelics_chunked_dataset.j
 ```bash
 python3 data_generation/generate_QAD.py
 ```
+download_data.py: for downloading original obelics dataset
+run_download.sh: loop running load_data.py to download dataset
+download_images.py: download obelics images
+process_data.py: process the downloaded obelics dataset and images
+generate_QAD.py: use processed obelics docs to generate (question, doc, answer) data
+
+
+

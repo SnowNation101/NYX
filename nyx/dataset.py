@@ -50,8 +50,28 @@ class TrainDataset(Dataset):
                     subset_data = load_from_disk(subset_path)
                     if len(subset_data) > num_sample and num_sample != -1:
                         subset_data = subset_data.select(range(num_sample))
-                
                 train_data.append(subset_data)
+        if self.data_args.t2t_dataset_path:
+            import json
+            from datasets import Dataset
+            print(f"Loading {len(data_args.t2t_subset_name)} T2T datasets: {data_args.t2t_subset_name}")
+            for subset in data_args.t2t_subset_name:
+                num_sample = data_args.num_sample_per_subset
+                dataset_path = os.path.join(data_args.t2t_dataset_path, subset, "train_with_retrieved_docs.jsonl")
+                data_from_file = []
+                with open(dataset_path, 'r', encoding='utf-8') as f:
+                    for line in f:
+                        data_from_file.append(json.loads(line.strip()))
+                subset_data = Dataset.from_list(data_from_file)
+                if len(subset_data) > num_sample and num_sample != -1:
+                    subset_data = subset_data.select(range(num_sample))
+                train_data.append(subset_data)
+        if self.data_args.mm_dataset_path:
+            import json
+            from datasets import Dataset
+            print("Loading mixed modal datasets")
+            # TODO:
+        
         self.train_data = concatenate_datasets(train_data)
 
         print(f"Number of samples: {len(self.train_data)}")
@@ -92,6 +112,7 @@ class TrainDataset(Dataset):
         elif self.model_args.model_backbone == "llava_next":
             return self._process_image(image, "high")
         elif self.model_args.model_backbone == "qwen2_5_vl":
+            # TODO: do resize
             return 
         else:
             return image

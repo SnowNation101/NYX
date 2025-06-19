@@ -6,7 +6,7 @@ from typing import List
 from dataclasses import dataclass
 from transformers import ProcessorMixin
 
-from src.arguments import DataArguments, ModelArguments
+from nyx.arguments import DataArguments, ModelArguments
 from qwen_vl_utils import process_vision_info
 
 

@@ -12,8 +12,8 @@ from transformers import (
     )
 from peft import LoraConfig, get_peft_model, PeftModel
 
-from src.arguments import ModelArguments, TrainingArguments
-from src.vlm_backbone.phi3_v.modeling_phi3_v import Phi3VForCausalLM
+from nyx.arguments import ModelArguments, TrainingArguments
+from transformers import Phi3VForCausalLM
 
 import os
 
