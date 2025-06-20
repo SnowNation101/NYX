@@ -65,9 +65,8 @@ deepspeed --include localhost:3,4,5,6,7 --master_port 12345 train.py --deepspeed
     --subset_name TAT-DQA ArxivQA InfoSeek_it2t InfoSeek_it2it ImageNet_1K N24News HatefulMemes SUN397 VOC2007 InfographicsVQA ChartQA A-OKVQA DocVQA OK-VQA Visual7W VisDial CIRR NIGHTS WebQA VisualNews_i2t VisualNews_t2i MSCOCO_i2t MSCOCO_t2i MSCOCO \
     --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5/mmE5-synthetic" \
     --synthetic_subset_name Retrieval VQA \
-    --t2t_dataset_path "" \
+    --t2t_dataset_name "/fs/archive/share/mm_datasets/NYX-T2T-Data" \
     --t2t_subset_name 2wikimultihopqa hotpotqa musique \
-    --mm_dataset_path "" \
     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
     --num_sample_per_subset 50000 \
     --dataloader_num_workers 4 \

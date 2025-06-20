@@ -1,19 +1,24 @@
 import os
 import random
 import datasets
+import json
 
 from typing import List, Tuple
 from datasets import load_dataset, concatenate_datasets, load_from_disk
 from torch.utils.data import Dataset
 from PIL import Image, ImageFile
 
+from utils.image_processing import smart_resize
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
-Phi_Image_token = "<|image_1|>"
-Llava_Image_token = "<image>"
-Qwen_Image_token = "<|vision_start|><|image_pad|><|vision_end|>"
+IMAGE_TOKEN = "<|image|>"
+PHI_IMAGE_TOKEN = "<|image_1|>"
+LLAVA_IMAGE_TOKEN = "<image>"
+QWEN_IMAGE_TOKEN = "<|vision_start|><|image_pad|><|vision_end|>"
 
 class TrainDataset(Dataset):
+
     def __init__(self, data_args, model_args):
         self.data_args = data_args
         self.model_args = model_args
@@ -51,30 +56,51 @@ class TrainDataset(Dataset):
                     if len(subset_data) > num_sample and num_sample != -1:
                         subset_data = subset_data.select(range(num_sample))
                 train_data.append(subset_data)
-        if self.data_args.t2t_dataset_path:
-            import json
-            from datasets import Dataset
+        if self.data_args.t2t_dataset_name:
             print(f"Loading {len(data_args.t2t_subset_name)} T2T datasets: {data_args.t2t_subset_name}")
             for subset in data_args.t2t_subset_name:
-                num_sample = data_args.num_sample_per_subset
-                dataset_path = os.path.join(data_args.t2t_dataset_path, subset, "train_with_retrieved_docs.jsonl")
-                data_from_file = []
-                with open(dataset_path, 'r', encoding='utf-8') as f:
-                    for line in f:
-                        data_from_file.append(json.loads(line.strip()))
-                subset_data = Dataset.from_list(data_from_file)
+                num_sample = self.data_args.num_sample_per_subset
+                subset_data = load_dataset(
+                    self.data_args.t2t_dataset_name,
+                    subset,
+                    split=self.data_args.dataset_split,
+                )
                 if len(subset_data) > num_sample and num_sample != -1:
                     subset_data = subset_data.select(range(num_sample))
+                # Look, this is utterly infuriating. 
+                # The "mmE5" data is flat-out string, 
+                # not the sequences it should be.
+                # But naturally, the Nyx data, being *properly* structured, 
+                # uses sequences.
+                # This mismatch is a guaranteed concatenation nightmare. 
+                # So, here we are, forced to painstakingly
+                # convert everything to string just to make this mess compatible. 
+                # This isn't a fix; 
+                # it's a desperate workaround.
+                column_names = subset_data.column_names
+                subset_data = subset_data.map(
+                        self._to_string_converter,
+                        fn_kwargs={"column_names": column_names}
+                    )
                 train_data.append(subset_data)
         if self.data_args.mm_dataset_path:
             import json
             from datasets import Dataset
             print("Loading mixed modal datasets")
-            # TODO:
+            # TODO: finish this
         
         self.train_data = concatenate_datasets(train_data)
 
         print(f"Number of samples: {len(self.train_data)}")
+        
+    def _to_string_converter(self, example, column_names):
+        """ Convert all fields in the example to string."""
+        for col in column_names:
+            if isinstance(example[col], list):
+                example[col] = json.dumps(example[col], ensure_ascii=False)
+            else:
+                example[col] = str(example[col])
+        return example
 
     def __len__(self):
         return len(self.train_data)
@@ -86,18 +112,6 @@ class TrainDataset(Dataset):
             image = image.resize((512, 512))
         else:
             image = image.resize((336, 336))
-        return image
-    
-    def _process_qwen_image(self, image):
-        if image is None:
-            return None
-        if image.width < 30 or image.height < 30:
-            scale = max(30 / image.width, 30 / image.height)
-            new_width = int(image.width * scale)
-            new_height = int(image.height * scale)
-            resized_img = image.resize((new_width, new_height), 
-                                       Image.Resampling.LANCZOS)
-            return resized_img
         return image
 
     def _get_image(self, img_path):
@@ -112,8 +126,8 @@ class TrainDataset(Dataset):
         elif self.model_args.model_backbone == "llava_next":
             return self._process_image(image, "high")
         elif self.model_args.model_backbone == "qwen2_5_vl":
-            # TODO: do resize
-            return 
+            new_h, new_w = smart_resize(image.height, image.width)
+            return image.resize((new_w, new_h))
         else:
             return image
 
@@ -149,16 +163,16 @@ class TrainDataset(Dataset):
                     neg_texts[ind] = random.choice([text for text in eval(neg_text_list) if text != ""])
         if self.model_args.model_backbone == "llava_next":
             # Update image token
-            qry_text = qry_text.replace(Phi_Image_token, Llava_Image_token)
-            pos_text = pos_text.replace(Phi_Image_token, Llava_Image_token)
+            qry_text = qry_text.replace(PHI_IMAGE_TOKEN, LLAVA_IMAGE_TOKEN)
+            pos_text = pos_text.replace(PHI_IMAGE_TOKEN, LLAVA_IMAGE_TOKEN)
             for ind, neg in enumerate(neg_texts):
-                neg_texts[ind] = neg.replace(Phi_Image_token, Llava_Image_token)
+                neg_texts[ind] = neg.replace(PHI_IMAGE_TOKEN, LLAVA_IMAGE_TOKEN)
         elif self.model_args.model_backbone == "qwen2_5_vl":
             # Update image token
-            qry_text = qry_text.replace(Phi_Image_token, Qwen_Image_token)
-            pos_text = pos_text.replace(Phi_Image_token, Qwen_Image_token)
+            qry_text = qry_text.replace(PHI_IMAGE_TOKEN, QWEN_IMAGE_TOKEN)
+            pos_text = pos_text.replace(PHI_IMAGE_TOKEN, QWEN_IMAGE_TOKEN)
             for ind, neg in enumerate(neg_texts):
-                neg_texts[ind] = neg.replace(Phi_Image_token, Qwen_Image_token)
+                neg_texts[ind] = neg.replace(PHI_IMAGE_TOKEN, QWEN_IMAGE_TOKEN)
 
         for neg_img in neg_image_paths:
             neg_images.append(self._get_image(neg_img))
@@ -198,7 +212,7 @@ class EvalDataset(Dataset):
         text, img_path = self.paired_dataset[item]["text"], self.paired_dataset[item]["img_path"]
         if self.model_args.model_backbone == "llava_next":
             # Update llava image token
-            text = text.replace(Phi_Image_token, Llava_Image_token)
+            text = text.replace(PHI_IMAGE_TOKEN, LLAVA_IMAGE_TOKEN)
         return text, self._get_image(img_path),
 
     def _process_image(self, image, resolution):

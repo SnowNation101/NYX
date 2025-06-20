@@ -4,7 +4,8 @@ import torch.distributed as dist
 from typing import Dict, Optional
 from torch import nn, Tensor
 from transformers import (
-    PreTrainedModel, AutoConfig, 
+    PreTrainedModel, AutoConfig,
+    AutoModelForCausalLM,
     MllamaForConditionalGeneration, 
     LlavaNextForConditionalGeneration,
     Qwen2_5_VLModel,
@@ -13,7 +14,6 @@ from transformers import (
 from peft import LoraConfig, get_peft_model, PeftModel
 
 from nyx.arguments import ModelArguments, TrainingArguments
-from transformers import Phi3VForCausalLM
 
 import os
 
@@ -98,7 +98,7 @@ class MMEBModel(nn.Module):
             base_model.padding_side = "left"
         elif model_args.model_backbone == "phi35v":
             config._attn_implementation = "eager"
-            base_model = Phi3VForCausalLM.from_pretrained(
+            base_model = AutoModelForCausalLM.from_pretrained(
                 model_args.model_name,
                 config=config,
                 torch_dtype=torch.bfloat16,
@@ -183,7 +183,7 @@ class MMEBModel(nn.Module):
             config.use_cache = False
             config.padding_side = "right"
             config._attn_implementation = "eager"
-            base_model = Phi3VForCausalLM.from_pretrained(model_args.model_name, **hf_kwargs, config=config,
+            base_model = AutoModelForCausalLM.from_pretrained(model_args.model_name, **hf_kwargs, config=config,
                                                           torch_dtype=torch.bfloat16, trust_remote_code=True)
             base_model.padding_side = "right"
         elif model_args.model_backbone == "mllama":

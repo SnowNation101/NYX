@@ -77,6 +77,15 @@ class DataArguments:
     synthetic_subset_name: List[str] = field(
         default=None, metadata={"help": "Useful for datasets with subsets"}
     )
+    t2t_dataset_name: str = field(
+        default=None, metadata={"help": "huggingface t2t dataset name"}
+    )
+    t2t_subset_name: List[str] = field(
+        default=None, metadata={"help": "Useful for t2t datasets with subsets"}
+    )
+    mm_dataset_path: str = field(
+        default=None, metadata={"help": "local multimodal dataset path"}
+    )
     dataset_split: str = field(
         default='train', metadata={"help": "dataset split"}
     )
