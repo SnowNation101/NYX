@@ -2,13 +2,17 @@ import os
 import random
 import datasets
 import json
+import ast
+
+import logging
+logger = logging.getLogger(__name__)
 
 from typing import List, Tuple
 from datasets import load_dataset, concatenate_datasets, load_from_disk
 from torch.utils.data import Dataset
 from PIL import Image, ImageFile
 
-from utils.image_processing import smart_resize
+from nyx.utils.image_processing import smart_resize
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 
@@ -16,6 +20,7 @@ IMAGE_TOKEN = "<|image|>"
 PHI_IMAGE_TOKEN = "<|image_1|>"
 LLAVA_IMAGE_TOKEN = "<image>"
 QWEN_IMAGE_TOKEN = "<|vision_start|><|image_pad|><|vision_end|>"
+
 
 class TrainDataset(Dataset):
 
@@ -115,11 +120,11 @@ class TrainDataset(Dataset):
         return image
 
     def _get_image(self, img_path):
-        if img_path == "":
+        if not img_path:
             return None
         full_img_path = os.path.join(self.data_args.image_dir, img_path)
         image = Image.open(full_img_path)
-        if 'Llama' in self.model_args.model_name or self.model_args.model_backbone == "mllama":
+        if self.model_args.model_backbone == "mllama":
             if image.size[1] == 1:
                 # print(f"Failed Image: {image}.")
                 image = image.resize((image.size[0], 2))
@@ -131,7 +136,37 @@ class TrainDataset(Dataset):
         else:
             return image
 
-    def filter_hard_negtives(self, negs, pos, negative_ratio):
+    def _extract_images(self, item):
+        images = []
+        valid_extensions = (
+            '.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.tif',
+            '.webp', '.ico', '.svg'
+        )
+
+        def is_valid_image(filename):
+            return isinstance(filename, str) and filename.lower().endswith(valid_extensions)
+
+        if isinstance(item, str):
+            item = item.strip()
+            if is_valid_image(item):
+                images.append(item)
+            else:
+                try:
+                    parsed = ast.literal_eval(item)
+                    if isinstance(parsed, list):
+                        for i in parsed:
+                            if is_valid_image(i):
+                                images.append(i)
+                except Exception:
+                    pass
+        elif isinstance(item, list):
+            for i in item:
+                if is_valid_image(i):
+                    images.append(i)
+
+        return images
+
+    def _filter_hard_negtives(self, negs, pos, negative_ratio):
         negs = eval(negs)
         if not isinstance(negs, list):
             negs = [negs]
@@ -147,13 +182,20 @@ class TrainDataset(Dataset):
             self.train_data[item]["qry"], self.train_data[item]["qry_image_path"],
             self.train_data[item]["pos_text"], self.train_data[item]["pos_image_path"],
         )
+
+        qry_image_paths = self._extract_images(qry_image_path)
+        qry_images = [self._get_image(img_path) for img_path in qry_image_paths]
+        pos_image_paths = self._extract_images(pos_image_path)
+        pos_images = [self._get_image(img_path) for img_path in pos_image_paths]
+
+
         neg_texts, neg_image_paths, neg_images = [], [], []
         if self.negative_ratio > 0:
             neg_text_list, neg_image_path_list = (
                 self.train_data[item]["neg_text"], self.train_data[item]["neg_image_path"],
             )
-            neg_texts = self.filter_hard_negtives(neg_text_list, pos_text, self.negative_ratio)
-            neg_image_paths = self.filter_hard_negtives(neg_image_path_list, pos_image_path, self.negative_ratio)
+            neg_texts = self._filter_hard_negtives(neg_text_list, pos_text, self.negative_ratio)
+            neg_image_paths = self._filter_hard_negtives(neg_image_path_list, pos_image_path, self.negative_ratio)
 
         for ind, neg in enumerate(neg_texts):
             if neg == '':
@@ -176,9 +218,17 @@ class TrainDataset(Dataset):
 
         for neg_img in neg_image_paths:
             neg_images.append(self._get_image(neg_img))
-        return (qry_text, self._get_image(qry_image_path),
-                pos_text, self._get_image(pos_image_path),
+
+        ret = (qry_text, qry_images,
+                pos_text, pos_images,
                 neg_texts, neg_images)
+        
+        if qry_text.count(QWEN_IMAGE_TOKEN) != len(qry_images):
+            logger.warning(f"+++Warning: The number of {QWEN_IMAGE_TOKEN} tokens ({qry_text.count(QWEN_IMAGE_TOKEN)}) does not match the number of images ({len(qry_images)}).")
+            logger.warning(f"+++qry_text: {qry_text}")
+            logger.warning(f"+++qry_images: {qry_image_path}")
+    
+        return ret
 
 
 class EvalDataset(Dataset):
@@ -225,7 +275,7 @@ class EvalDataset(Dataset):
         return image
 
     def _get_image(self, img_path):
-        if img_path == "":
+        if not img_path:
             return None
         full_img_path = os.path.join(self.data_args.image_dir, img_path)
         image = Image.open(full_img_path)

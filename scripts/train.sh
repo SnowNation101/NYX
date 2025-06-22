@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-MODEL_NAME_OR_PATH="/fs/archive/share/Qwen2.5-VL-7B-Instruct"
+# MODEL_NAME_OR_PATH="/fs/archive/share/Qwen2.5-VL-7B-Instruct"
+MODEL_NAME_OR_PATH="/fs/archive/share/Qwen2.5-VL-3B-Instruct"
 # MODEL_NAME_OR_PATH="meta-llama/Llama-3.2-11B-Vision"
 # MODEL_NAME_OR_PATH="microsoft/Phi-3.5-vision-instruct"
 # MODEL_NAME_OR_PATH="llava-hf/llava-v1.6-mistral-7b-hf"
@@ -56,16 +57,18 @@ fi
 # --include localhost:0,1,2,3
 # --num_gpus 8
 
-export WANDB_PROJECT="Nyx"
-export WANDB_LOG_MODEL="checkpoint"
-export WANDB_WATCH="false"
+# export WANDB_PROJECT="Nyx"
+# export WANDB_LOG_MODEL="checkpoint"
+# export WANDB_WATCH="false"
 
-deepspeed --include localhost:3,4,5,6,7 --master_port 12345 train.py --deepspeed "ds_config.json" \
-    --dataset_name "/fs/archive/share/mm_datasets/mmE5/mmE5-MMEB-hardneg" \
+export SWANLAB_PROJ_NAME="Nyx"
+
+deepspeed --include localhost:2,3,4,5 --master_port 12345 train.py --deepspeed "ds_config.json" \
+    --dataset_name "/fs/archive/share/mm_datasets/Nyx-mmE5-MMEB-hardneg" \
     --subset_name TAT-DQA ArxivQA InfoSeek_it2t InfoSeek_it2it ImageNet_1K N24News HatefulMemes SUN397 VOC2007 InfographicsVQA ChartQA A-OKVQA DocVQA OK-VQA Visual7W VisDial CIRR NIGHTS WebQA VisualNews_i2t VisualNews_t2i MSCOCO_i2t MSCOCO_t2i MSCOCO \
-    --synthetic_dataset_name "/fs/archive/share/mm_datasets/mmE5/mmE5-synthetic" \
+    --synthetic_dataset_name "/fs/archive/share/mm_datasets/Nyx-mmE5-Synthetic" \
     --synthetic_subset_name Retrieval VQA \
-    --t2t_dataset_name "/fs/archive/share/mm_datasets/NYX-T2T-Data" \
+    --t2t_dataset_name "/fs/archive/share/mm_datasets/Nyx-T2T-Data" \
     --t2t_subset_name 2wikimultihopqa hotpotqa musique \
     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
     --num_sample_per_subset 50000 \
@@ -81,6 +84,6 @@ deepspeed --include localhost:3,4,5,6,7 --master_port 12345 train.py --deepspeed
     --model_backbone "${MODEL_BACKBONE}" \
     --processor_name "${PROCESSOR_NAME}" \
     --resume_from_checkpoint "${OUTPUT_DIR}" \
-    --per_device_train_batch_size 16 --gradient_accumulation_steps 4 \
-    --negative_ratio 3 \
-    --report_to "wandb"
+    --per_device_train_batch_size 16 --gradient_accumulation_steps 8 \
+    --negative_ratio 2 \
+    --report_to swanlab

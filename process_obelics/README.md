@@ -18,8 +18,15 @@ python3 data_generation/generate_QAD.py
 download_data.py: for downloading original obelics dataset
 run_download.sh: loop running load_data.py to download dataset
 download_images.py: download obelics images
-process_data.py: process the downloaded obelics dataset and images
-generate_QAD.py: use processed obelics docs to generate (question, doc, answer) data
+process_data.ipynb: process the downloaded obelics dataset and images
+generate_QAD.py: use processed obelics docs to generate (question, doc, answer) data -> generated_qa.json
+filter_again.py: filter out data with error loading images -> processed_qa.json
+process_generated.py: split generated QAs into single QA pairs -> qa_flattened.json
+mine_hardneg.py: use mmE5 to retrieve docs as hard negatives -> obelics_hardneg.json
+
+
+
+
 
 
 

@@ -27,98 +27,32 @@ class TrainCollator:
 
         return qry_inputs, pos_inputs, neg_inputs
     
-    def _process_single_data(self, text, image, input_ids, pixel_values, attention_mask, image_grid_thw, image_exist):
-        if image is None:
-            if self.model_args.model_backbone == "llava_next":
-                inputs = self.processor(images=None, text=text, return_tensors="pt")
-            elif self.model_args.model_backbone == "qwen2_5_vl":
-                inputs = self.processor(text=text, 
-                                        images=None, 
-                                        return_tensors="pt",
-                                        max_length=self.data_args.max_len, 
-                                        truncation=True)
-            else:
-                inputs = self.processor(text, None, return_tensors="pt", max_length=self.data_args.max_len,
-                                        truncation=True)
-            input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-            return image_exist
-        else:
-            if self.model_args.model_backbone == "llava_next":
-                inputs = self.processor(images=image, text=text, return_tensors="pt")
-            elif self.model_args.model_backbone == "qwen2_5_vl":
-                image = image.convert("RGB")
-                inputs = self.processor(text=text, 
-                                        images=[image], 
-                                        return_tensors="pt", 
-                                        max_length=self.data_args.max_len, 
-                                        truncation=True)
-            else:
-                inputs = self.processor(text=text, 
-                                        images=[image], 
-                                        return_tensors="pt",
-                                        max_length=self.data_args.max_len)
-            input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-            pixel_values.append(inputs['pixel_values'])
-            image_grid_thw.append(inputs['image_grid_thw'])
-            return True
-
     def _get_batch_inputs(self, examples, text_idx, image_idx):
-        input_ids, pixel_values, attention_mask, image_grid_thw = [], [], [], []
-        # Init image_exist to False, 
-        # if any example in the batch has image, it will be set to True
-        image_exist = False
+        texts = []
+        images = []
         for example in examples:
+            # print(example)
             text, image = example[text_idx], example[image_idx]
-            if isinstance(image, List):
-                for t, img in zip(text, image):
-                    image_exist = self._process_single_data(
-                        t, img, 
-                        input_ids, 
-                        pixel_values, 
-                        attention_mask, 
-                        image_grid_thw, 
-                        image_exist)
+            if isinstance(text, List):
+                for txt in text:
+                    # Since text must not be None, we can safely append it
+                    texts.append(txt)
             else:
-                image_exist = self._process_single_data(
-                    text, image, 
-                    input_ids, 
-                    pixel_values, 
-                    attention_mask, 
-                    image_grid_thw, 
-                    image_exist)
-        if len(input_ids)==0:
-            return None
+                texts.append(text)
+            for img in image:
+                if img is not None:
+                    images.append(img)
 
-        input_ids = torch._C._nn.pad_sequence(
-            input_ids, 
-            batch_first=True, 
-            padding_value=self.processor.tokenizer.pad_token_id
-        ).squeeze(2)
-
-        attention_mask = input_ids.ne(self.processor.tokenizer.pad_token_id)
-
-        if image_exist:
-            pixel_values = torch.cat(pixel_values, dim=0)
-            image_grid_thw = torch.cat(image_grid_thw, dim=0)
-            inputs = {
-                'input_ids': input_ids,
-                'attention_mask': attention_mask,
-                'pixel_values': pixel_values,
-                'image_grid_thw': image_grid_thw,
-            }
-            # print("input_ids shape: ", input_ids.shape)
-            # print("pixel_values shape: ", pixel_values.shape)
-            # print("attention_mask shape: ", attention_mask.shape)
-            # print("image_grid_thw shape: ", image_grid_thw.shape)
-        else:
-            inputs = {
-                'input_ids': input_ids,
-                'attention_mask': attention_mask,
-            }
-
+        inputs = self.processor(
+            text=texts, 
+            images=images if images else None, 
+            return_tensors="pt", 
+            max_length=self.data_args.max_len,
+            padding=True,
+            truncation=True
+        )
         return inputs
-
-
+    
     
 @dataclass
 class EvalCollator:
@@ -221,96 +155,28 @@ class LlamaCollator:
         """
         :param examples: qry, qry_image, pos_text, pos_image
         """
-
         qry_inputs = self._get_batch_inputs(examples, 0, 1)
         pos_inputs = self._get_batch_inputs(examples, 2, 3)
         neg_inputs = self._get_batch_inputs(examples, 4, 5)
 
         return qry_inputs, pos_inputs, neg_inputs
     
-    def _process_single_data(self, text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist):
-        if image == None:
-            text = str(text)
-            text = text.replace("<|image_1|>\n", "<|begin_of_text|>")
-        else:
-            text = str(text)
-            text = text.replace("<|image_1|>\n", "<|image|><|begin_of_text|>")
-        
-        if image is None:
-            inputs = self.processor(text=text, images=None, return_tensors="pt", max_length=self.data_args.max_len,
-                                    truncation=True)
-            input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-
-            pixel_values.append(input_ids[-1].shape[0])
-            aspect_ratio_ids.append(input_ids[-1].shape[0])
-            aspect_ratio_mask.append(input_ids[-1].shape[0])
-            batch_cross_attention_mask.append(input_ids[-1].shape[0])
-            if not image_exist:
-                return False
-            else:
-                return image_exist
-        else:
-            try:
-                inputs = self.processor(text=text, images=[image], return_tensors="pt", max_length=self.data_args.max_len, truncation=True)
-            except Exception as e:
-                print(f"Error: {image}")
-                print(f"Error: {text}")
-                return False
-            input_ids.append(inputs["input_ids"].squeeze(0).unsqueeze(1))
-            pixel_values.append(inputs['pixel_values'])
-            aspect_ratio_ids.append(inputs["aspect_ratio_ids"])
-            aspect_ratio_mask.append(inputs["aspect_ratio_mask"])
-            batch_cross_attention_mask.append(inputs["cross_attention_mask"].squeeze(0))
-            return True
-
     def _get_batch_inputs(self, examples, text_idx, image_idx):
-        input_ids, pixel_values, invalid_indices, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask = [], [], [], [], [], []
-        image_exist = False
-        for idx, example in enumerate(examples):
+        text = []
+        images = []
+        for example in examples:
             text, image = example[text_idx], example[image_idx]
+            text.append(text)
             if isinstance(image, List):
-                for t, img in zip(text, image):
-                    image_exist = self._process_single_data(t, img, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
-
+                images.extend(image)
             else:
-                image_exist = self._process_single_data(text, image, input_ids, pixel_values, aspect_ratio_ids, aspect_ratio_mask, batch_cross_attention_mask, image_exist)
-        if len(input_ids)==0:
-            return None
-        if image_exist:
-            for ind, input_id in enumerate(input_ids):
-                if not isinstance(pixel_values[ind], int):
-                    continue
-                pixel_values[ind] = convert_zero_tensor(pixel_values)
-                aspect_ratio_ids[ind] = convert_zero_tensor(aspect_ratio_ids)
-                aspect_ratio_mask[ind] = convert_zero_tensor(aspect_ratio_mask, need_zero=True)
-                batch_cross_attention_mask[ind] = convert_zero_tensor(batch_cross_attention_mask, need_zero=True, seq_len=input_id.shape[0])
-
-        input_ids = torch._C._nn.pad_sequence(
-            input_ids, batch_first=True, padding_value=self.processor.tokenizer.pad_token_id
-        ).squeeze(2)
-        attention_mask = input_ids.ne(self.processor.tokenizer.pad_token_id)
-
-        if not image_exist:
-            inputs = {
-                'input_ids': input_ids,
-                'attention_mask': attention_mask,
-            }
-        else:
-            pixel_values = torch.cat(pixel_values, dim=0)
-            aspect_ratio_ids = torch.cat(aspect_ratio_ids, dim=0)
-            aspect_ratio_mask = torch.cat(aspect_ratio_mask, dim=0)
-            cross_attention_mask = torch._C._nn.pad_sequence(
-                batch_cross_attention_mask, batch_first=True, padding_value=0
-            )
-            inputs = {
-                'input_ids': input_ids,
-                'attention_mask': attention_mask,
-                'pixel_values': pixel_values,
-                'aspect_ratio_ids': aspect_ratio_ids,
-                'aspect_ratio_mask': aspect_ratio_mask,
-                'cross_attention_mask': cross_attention_mask,
-            }
-
+                images.append(image)
+        inputs = self.processor(
+            text=text, 
+            images=[image], 
+            return_tensors="pt", 
+            max_length=self.data_args.max_len, 
+            truncation=True)
         return inputs
 
 @dataclass

@@ -175,7 +175,13 @@ checkpoint/
 wandb/
 
 draw_figure.ipynb
-generated_qa.json
+
+# all data files except deepspeed configuration
+*.json
+!ds_config.json
+
+*.faiss
+
 
 # My testing files...
 t.ipynb
