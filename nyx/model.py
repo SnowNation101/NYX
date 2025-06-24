@@ -4,7 +4,8 @@ import torch.distributed as dist
 from typing import Dict, Optional
 from torch import nn, Tensor
 from transformers import (
-    PreTrainedModel, AutoConfig, 
+    PreTrainedModel, AutoConfig,
+    AutoModelForCausalLM,
     MllamaForConditionalGeneration, 
     LlavaNextForConditionalGeneration,
     Qwen2_5_VLModel,
@@ -12,8 +13,7 @@ from transformers import (
     )
 from peft import LoraConfig, get_peft_model, PeftModel
 
-from src.arguments import ModelArguments, TrainingArguments
-from src.vlm_backbone.phi3_v.modeling_phi3_v import Phi3VForCausalLM
+from nyx.arguments import ModelArguments, TrainingArguments
 
 import os
 
@@ -46,13 +46,13 @@ class MMEBModel(nn.Module):
             self.world_size = dist.get_world_size()
             print(f"Process rank: {self.process_rank}, World size: {self.world_size}")
 
-    def encode_input(self, input):
+    def encode_inputs(self, inputs):
         hidden_states = self.encoder(
-            **input, return_dict=True, 
+            **inputs, return_dict=True, 
             output_hidden_states=True
             )
         hidden_states = hidden_states.hidden_states[-1]
-        pooled_output = self._pooling(hidden_states, input['attention_mask'])
+        pooled_output = self._pooling(hidden_states, inputs['attention_mask'])
         return pooled_output
 
     def _pooling(self, last_hidden_state, attention_mask):
@@ -98,7 +98,7 @@ class MMEBModel(nn.Module):
             base_model.padding_side = "left"
         elif model_args.model_backbone == "phi35v":
             config._attn_implementation = "eager"
-            base_model = Phi3VForCausalLM.from_pretrained(
+            base_model = AutoModelForCausalLM.from_pretrained(
                 model_args.model_name,
                 config=config,
                 torch_dtype=torch.bfloat16,
@@ -183,7 +183,7 @@ class MMEBModel(nn.Module):
             config.use_cache = False
             config.padding_side = "right"
             config._attn_implementation = "eager"
-            base_model = Phi3VForCausalLM.from_pretrained(model_args.model_name, **hf_kwargs, config=config,
+            base_model = AutoModelForCausalLM.from_pretrained(model_args.model_name, **hf_kwargs, config=config,
                                                           torch_dtype=torch.bfloat16, trust_remote_code=True)
             base_model.padding_side = "right"
         elif model_args.model_backbone == "mllama":
@@ -227,9 +227,9 @@ class MMEBModel(nn.Module):
         self.encoder.save_pretrained(output_dir)
 
     def forward(self, qry: Dict[str, Tensor] = None, tgt: Dict[str, Tensor] = None, neg: Dict[str, Tensor] = None):
-        qry_reps = self.encode_input(qry) if qry else None # (bsz_per_device, dim)
-        tgt_reps = self.encode_input(tgt) if tgt else None # (bsz_per_device, dim)
-        neg_reps = self.encode_input(neg) if neg else None # (bsz_per_device * negative_ratio, dim)
+        qry_reps = self.encode_inputs(qry) if qry else None # (bsz_per_device, dim)
+        tgt_reps = self.encode_inputs(tgt) if tgt else None # (bsz_per_device, dim)
+        neg_reps = self.encode_inputs(neg) if neg else None # (bsz_per_device * negative_ratio, dim)
         if qry_reps is None or tgt_reps is None:
             return {"qry_reps": qry_reps, "tgt_reps": tgt_reps}
 

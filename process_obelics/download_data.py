@@ -11,6 +11,8 @@ snapshot_download(
     endpoint="https://hf-mirror.com"
 )
 
+# if successfully loaded,
+# the dataset is fully downloaded
 obelics_dataset = load_dataset(data_dir)
 
 print("loaded!!")

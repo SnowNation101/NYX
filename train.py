@@ -6,15 +6,14 @@ import warnings
 warnings.simplefilter("ignore", category=FutureWarning)
 
 from transformers import AutoProcessor, HfArgumentParser
+from transformers import LlavaNextProcessor
 from transformers.trainer_utils import get_last_checkpoint
 
-from src.dataset import TrainDataset
-from src.collator import TrainCollator, LlamaCollator
-from src.arguments import ModelArguments, DataArguments, TrainingArguments
-from src.model import MMEBModel
-from src.trainer import MMEBTrainer
-from src.vlm_backbone.llava_next.processing_llava_next import LlavaNextProcessor
-from src.vlm_backbone.phi3_v.processing_phi3_v import Phi3VProcessor
+from nyx.dataset import TrainDataset
+from nyx.collator import TrainCollator, LlamaCollator
+from nyx.arguments import ModelArguments, DataArguments, TrainingArguments
+from nyx.model import MMEBModel
+from nyx.trainer import MMEBTrainer
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +38,7 @@ def main():
             trust_remote_code=True)
         processor.tokenizer.padding_side = "right"
     elif model_args.model_backbone == "phi35v":
-        processor = Phi3VProcessor.from_pretrained(
+        processor = AutoProcessor.from_pretrained(
             model_args.processor_name if model_args.processor_name else model_args.model_name,
             trust_remote_code=True,
             num_crops=model_args.num_crops,

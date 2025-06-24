@@ -55,6 +55,7 @@ texts = [
     processor.apply_chat_template(msg, tokenize=False, add_generation_prompt=True)
     for msg in messages
 ]
+
 image_inputs, video_inputs = process_vision_info(messages)
 inputs = processor(
     text=texts,
@@ -63,7 +64,6 @@ inputs = processor(
     padding=True,
     return_tensors="pt",
 )
-inputs = inputs.to("cuda")
 
 # Batch Inference
 generated_ids = model.generate(**inputs, max_new_tokens=128)

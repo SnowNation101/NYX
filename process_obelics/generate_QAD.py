@@ -184,8 +184,8 @@ def main():
             "generated_qa": output.outputs[0].text,
         })
 
-    os.makedirs("data_generation", exist_ok=True)
-    with open("data_generation/generated_qa.json", "w") as f:
+    os.makedirs("process_obelics", exist_ok=True)
+    with open("process_obelics/generated_qa.json", "w") as f:
         json.dump(results, f, indent=4)
 
 if __name__ == "__main__":

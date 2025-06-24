@@ -1,8 +1,8 @@
 import json
 from tqdm import tqdm
 from collections import defaultdict
-from src.utils.process_gaokao import get_gaokao_mm_data
-from src.utils.process_gaokao import get_gaokao_bench_data
+from nyx.utils.process_gaokao import get_gaokao_mm_data
+from nyx.utils.process_gaokao import get_gaokao_bench_data
 import re
 
 def extract_answer(output):
