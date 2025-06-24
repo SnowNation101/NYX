@@ -64,7 +64,7 @@ fi
 export SWANLAB_PROJ_NAME="Nyx"
 
 deepspeed --include localhost:2,3,4,5 --master_port 12345 train.py --deepspeed "ds_config.json" \
-    --dataset_name "/fs/archive/share/mm_datasets/Nyx-mmE5-MMEB-hardneg" \
+    --dataset_name "/fs/archive/share/mm_datasets/Nyx-mmE5-MMEB" \
     --subset_name TAT-DQA ArxivQA InfoSeek_it2t InfoSeek_it2it ImageNet_1K N24News HatefulMemes SUN397 VOC2007 InfographicsVQA ChartQA A-OKVQA DocVQA OK-VQA Visual7W VisDial CIRR NIGHTS WebQA VisualNews_i2t VisualNews_t2i MSCOCO_i2t MSCOCO_t2i MSCOCO \
     --synthetic_dataset_name "/fs/archive/share/mm_datasets/Nyx-mmE5-Synthetic" \
     --synthetic_subset_name Retrieval VQA \

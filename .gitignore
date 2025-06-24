@@ -173,6 +173,7 @@ outputs/
 core
 checkpoint/
 wandb/
+swanlog/
 
 draw_figure.ipynb
 
@@ -187,6 +188,7 @@ draw_figure.ipynb
 t.ipynb
 t.py
 tt.py
+ttt.py
 test.py
 try.py
 try_load.py

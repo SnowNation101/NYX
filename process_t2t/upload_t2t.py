@@ -1,5 +1,6 @@
 import json
 import os
+import random
 from datasets import Dataset, DatasetDict, Features, Sequence, Value
 
 data_dir = "/fs/archive/share/mm_datasets/t2t_data"
@@ -10,6 +11,7 @@ SUBSET_SPLIT = {
     "hotpotqa": ['train', 'dev'],
     "musique": ['train', 'dev'],
 }
+
 
 raw_datasets = {}
 for dataset_name, splits in SUBSET_SPLIT.items():
@@ -22,14 +24,17 @@ for dataset_name, splits in SUBSET_SPLIT.items():
             for line in f:
                 data_from_file.append(json.loads(line.strip()))
 
-        raw_datasets[dataset_name][split] = data_from_file
+        # Rename dev -> test
+        actual_split = 'test' if split == 'dev' else split
+        raw_datasets[dataset_name][actual_split] = data_from_file
+
 
 processed_data = {}
-for dataset_name, splits in SUBSET_SPLIT.items():
-    for split in splits:
+for dataset_name, splits in raw_datasets.items():
+    processed_data.setdefault(dataset_name, {})
+    for split_name, examples in splits.items():
         new_split_data = []
-        processed_data.setdefault(dataset_name, {})
-        for item in raw_datasets[dataset_name][split]:
+        for item in examples:
             new_item = {
                 "qry": item["question"],
                 "qry_image_path": [],
@@ -40,7 +45,14 @@ for dataset_name, splits in SUBSET_SPLIT.items():
                 "ans": item["golden_answers"],
             }
             new_split_data.append(new_item)
-        processed_data[dataset_name][split] = new_split_data
+
+        # If it's test split and size > 250, subsample
+        if split_name == "test" and len(new_split_data) > 250:
+            random.seed(42)
+            new_split_data = random.sample(new_split_data, 250)
+
+        processed_data[dataset_name][split_name] = new_split_data
+
 
 repo_id = "SnowNation/Nyx-T2T-Data"
 
