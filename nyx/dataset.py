@@ -12,6 +12,7 @@ from datasets import load_dataset, concatenate_datasets, load_from_disk
 from torch.utils.data import Dataset
 from PIL import Image, ImageFile
 
+from qwen_vl_utils import process_vision_info
 from nyx.utils.image_processing import smart_resize
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -28,6 +29,7 @@ class TrainDataset(Dataset):
         self.data_args = data_args
         self.model_args = model_args
         self.negative_ratio = self.data_args.negative_ratio
+            
         train_data = []
         if self.data_args.synthetic_dataset_name or self.data_args.synthetic_dataset_path:
             print(f"Loading {len(data_args.synthetic_subset_name)} synthetic datasets: {data_args.synthetic_subset_name}")
@@ -72,7 +74,7 @@ class TrainDataset(Dataset):
                 )
                 if len(subset_data) > num_sample and num_sample != -1:
                     subset_data = subset_data.select(range(num_sample))
-                # Look, this is utterly infuriating. 
+                # Look, this is utterly infuriating. :( :( :(
                 # The "mmE5" data is flat-out string, 
                 # not the sequences it should be.
                 # But naturally, the Nyx data, being *properly* structured, 
@@ -92,7 +94,18 @@ class TrainDataset(Dataset):
             import json
             from datasets import Dataset
             print("Loading mixed modal datasets")
-            # TODO: finish this
+            with open(self.data_args.mm_dataset_path, "r") as f:
+                mm_data = json.load(f)
+            if len(mm_data) > self.data_args.num_sample_per_subset and self.data_args.num_sample_per_subset != -1:
+                mm_data = mm_data[:self.data_args.num_sample_per_subset]
+            mm_data = Dataset.from_list(mm_data)
+            # Convert all fields to string
+            column_names = mm_data.column_names
+            mm_data = mm_data.map(
+                self._to_string_converter,
+                fn_kwargs={"column_names": column_names}
+            )
+            train_data.append(mm_data)
         
         self.train_data = concatenate_datasets(train_data)
 
@@ -119,7 +132,8 @@ class TrainDataset(Dataset):
             image = image.resize((336, 336))
         return image
 
-    def _get_image(self, img_path):
+    def _get_image(self, img_path: str):
+        """Get a single image from the image path."""
         if not img_path:
             return None
         full_img_path = os.path.join(self.data_args.image_dir, img_path)
@@ -131,12 +145,18 @@ class TrainDataset(Dataset):
         elif self.model_args.model_backbone == "llava_next":
             return self._process_image(image, "high")
         elif self.model_args.model_backbone == "qwen2_5_vl":
-            new_h, new_w = smart_resize(image.height, image.width)
-            return image.resize((new_w, new_h))
+            # new_h, new_w = smart_resize(image.height, image.width)
+            # return image.resize((new_w, new_h))
+            # Make a seudo message for processing_vision_info
+            pseudo_message = [{"content": [{"type": "image", "image": image}]}]
+            images, _ = process_vision_info(pseudo_message)
+            return images[0]
         else:
             return image
 
+
     def _extract_images(self, item):
+        """Extract image paths from a string or list of strings."""
         images = []
         valid_extensions = (
             '.jpg', '.jpeg', '.png', '.bmp', '.gif', '.tiff', '.tif',
@@ -146,25 +166,28 @@ class TrainDataset(Dataset):
         def is_valid_image(filename):
             return isinstance(filename, str) and filename.lower().endswith(valid_extensions)
 
-        if isinstance(item, str):
-            item = item.strip()
+        if not item or not isinstance(item, str) or item.strip().lower() == "none":
+            return images  # early return if item is None, "", or "none"
+
+        item = item.strip()
+
+        try:
+            # Try to parse the string using ast.literal_eval
+            parsed = ast.literal_eval(item)
+            if isinstance(parsed, list):
+                for i in parsed:
+                    if is_valid_image(i):
+                        images.append(i)
+            elif isinstance(parsed, str):
+                if is_valid_image(parsed):
+                    images.append(parsed)
+        except Exception:
+            # If eval fails, treat the string as a single path
             if is_valid_image(item):
                 images.append(item)
-            else:
-                try:
-                    parsed = ast.literal_eval(item)
-                    if isinstance(parsed, list):
-                        for i in parsed:
-                            if is_valid_image(i):
-                                images.append(i)
-                except Exception:
-                    pass
-        elif isinstance(item, list):
-            for i in item:
-                if is_valid_image(i):
-                    images.append(i)
 
         return images
+
 
     def _filter_hard_negtives(self, negs, pos, negative_ratio):
         negs = eval(negs)
@@ -222,11 +245,6 @@ class TrainDataset(Dataset):
         ret = (qry_text, qry_images,
                 pos_text, pos_images,
                 neg_texts, neg_images)
-        
-        if qry_text.count(QWEN_IMAGE_TOKEN) != len(qry_images):
-            logger.warning(f"+++Warning: The number of {QWEN_IMAGE_TOKEN} tokens ({qry_text.count(QWEN_IMAGE_TOKEN)}) does not match the number of images ({len(qry_images)}).")
-            logger.warning(f"+++qry_text: {qry_text}")
-            logger.warning(f"+++qry_images: {qry_image_path}")
     
         return ret
 

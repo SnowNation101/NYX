@@ -57,6 +57,7 @@ texts = [
 ]
 
 image_inputs, video_inputs = process_vision_info(messages)
+
 inputs = processor(
     text=texts,
     images=image_inputs,

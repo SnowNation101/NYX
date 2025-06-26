@@ -70,10 +70,11 @@ deepspeed --include localhost:2,3,4,5 --master_port 12345 train.py --deepspeed "
     --synthetic_subset_name Retrieval VQA \
     --t2t_dataset_name "/fs/archive/share/mm_datasets/Nyx-T2T-Data" \
     --t2t_subset_name 2wikimultihopqa hotpotqa musique \
+    --mm_dataset_path "process_obelics/obelics_hardneg.json" \
     --model_name "${MODEL_NAME_OR_PATH}" --bf16 --pooling last \
     --num_sample_per_subset 50000 \
     --dataloader_num_workers 4 \
-    --image_dir "/fs/archive/share/mm_datasets/mmE5/" \
+    --image_dir "/fs/archive/share/mm_datasets/mmE5/images" \
     --gradient_checkpointing True \
     --num_train_epochs 1 \
     --lora --lora_r 16 \
